@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>BenderBotWeather</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    
+<!--        <form th:method="POST" th:action="@{/weather}" th:object="${name}">
+                <label for="name">Введите название города:</label>
+                <input type="text" th:field="*{name}"/><br>
+                <p></p>
+                <input type="submit" value="Получить прогноз">
+        </form>-->
+    <body>
+        <table border="1" align="center" cellspacing="0">
+            <caption><b>ПОГОДА НА СЕГОДНЯ</b></caption>
+            <br/>
+            <br/>
+            <tr align="center" valign="middle">
+                <th width="10%">Город</th>
+                <th width="10%">Температура<br/>(T)</th>
+                <th width="10%">Чувстуется<br/>как</th>
+                <th width="10%">T<br/>(min)</th>
+                <th width="10%">T<br/>(max)</th>
+                <th width="10%">Давление</th>
+                <th width="10%">Влажность</th>
+                <th width="10%">P<br/>(на уровне моря)</th>
+                <th width="10%">P<br/>(на уровне земли)</th>
+                <th width="10%">Описание</th>
+                <th width="10%">Видимость</th>
+            </tr> <!--ряд с ячейками заголовков-->
+            <tr th:each="w : ${description}" align="center" valign="middle">
+                <td th:text="${name}"></td>
+                <td th:text="${temp}"></td>
+                <td th:text="${feels_like}"></td>
+                <td th:text="${temp_min}"></td>
+                <td th:text="${temp_max}"></td>
+                <td th:text="${pressure}"></td>
+                <td th:text="${humidity}"</td>
+                <td th:text="${sea_level}"></td>
+                <td th:text="${grnd_level}"></td>
+                <td th:text="${w.getDescription()}"></td>
+                <td th:text="${visibility}"></td>
+            </tr> <!--ряд с ячейками тела таблицы-->
+        </table>
+        <br>
+        <p>JSON: </p>
+        <p th:text="${weather}"></p>
+        <p>MAP: </p>
+        <p th:text="${test}"></p>
+    </body>
+</html>
