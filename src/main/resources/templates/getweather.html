@@ -5,36 +5,36 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 -->
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>BenderBotWeather</title>
+        <title>BenderWeather</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    
-<!--        <form th:method="POST" th:action="@{/weather}" th:object="${name}">
-                <label for="name">Введите название города:</label>
-                <input type="text" th:field="*{name}"/><br>
-                <p></p>
-                <input type="submit" value="Получить прогноз">
+    <body background="https://sun6-20.userapi.com/s/v1/ig2/rnIRr5jTud8Vy_fQZtfqKrvDRSRQ3VPbVov1_bxMog8liQhKlknviuoTBLVHLFkDJK84OumDuih1wjFwBC48EErt.jpg?size=1024x1024&quality=95&crop=0,0,1024,1024&ava=1">
+<!--        <form th:method="POST" th:action="@{/weather}" th:object="${getCityWeather}">
+            <label for="name">Введите название города:</label>
+            <input type="text" th:field="*{name}"/><br>
+            <p></p>
+            <input type="submit" value="Получить прогноз">
         </form>-->
-    <body>
         <table border="1" align="center" cellspacing="0">
-            <caption><b>ПОГОДА НА СЕГОДНЯ</b></caption>
+            <caption><b>ПОГОДА НА СЕГОДНЯ<br/></b><br/></caption>
             <br/>
             <br/>
             <tr align="center" valign="middle">
                 <th width="10%">Город</th>
                 <th width="10%">Температура<br/>(T)</th>
-                <th width="10%">Чувстуется<br/>как</th>
+                <th width="10%">Чувстуется как,<br/>град.<br/></th>
                 <th width="10%">T<br/>(min)</th>
                 <th width="10%">T<br/>(max)</th>
-                <th width="10%">Давление</th>
-                <th width="10%">Влажность</th>
-                <th width="10%">P<br/>(на уровне моря)</th>
-                <th width="10%">P<br/>(на уровне земли)</th>
+                <th width="10%">Давление,<br/>hPa</th>
+                <th width="10%">Влажность,<br/>%</th>
+                <th width="10%">Скорость<br/>ветра, м/сек.</th>
+                <th width="10%">Облачность,<br/>в %</th>
                 <th width="10%">Описание</th>
-                <th width="10%">Видимость</th>
+                <th width="10%">Видимость, м.</th>
             </tr> <!--ряд с ячейками заголовков-->
-            <tr th:each="w : ${description}" align="center" valign="middle">
+            <!--<tr th:each="w : ${description}" align="center" valign="middle">-->
+            <tr th:each="w : ${allweather}" align="center" valign="middle">
                 <td th:text="${name}"></td>
                 <td th:text="${temp}"></td>
                 <td th:text="${feels_like}"></td>
@@ -42,8 +42,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <td th:text="${temp_max}"></td>
                 <td th:text="${pressure}"></td>
                 <td th:text="${humidity}"</td>
-                <td th:text="${sea_level}"></td>
-                <td th:text="${grnd_level}"></td>
+                <td th:text="${wind}"></td>
+                <td th:text="${clouds}"></td>
                 <td th:text="${w.getDescription()}"></td>
                 <td th:text="${visibility}"></td>
             </tr> <!--ряд с ячейками тела таблицы-->
@@ -51,7 +51,5 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <br>
         <p>JSON: </p>
         <p th:text="${weather}"></p>
-        <p>MAP: </p>
-        <p th:text="${test}"></p>
     </body>
 </html>
