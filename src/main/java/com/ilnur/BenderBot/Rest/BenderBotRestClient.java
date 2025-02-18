@@ -4,8 +4,8 @@
  */
 package com.ilnur.BenderBot.Rest;
 
-import java.net.UnknownHostException;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,19 +13,53 @@ import org.springframework.web.client.RestTemplate;
  * https://catfact.ninja/fact
  * @author ЭмирНурияКарим
  */
-//https://api.openweathermap.org/data/2.5/weather?q=Kazan&appid=733ddc1d0dfded45e19188b329447d8c&lang=ru
 
 @Component
 public class BenderBotRestClient {
     
-    private final RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-    public BenderBotRestClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    @Value("${weather.apitoken}")
+    private String weatherApiToken;
+    
+    private String cityName;
+
+    public String getCurrentWeather(String cityName) {
+        setCityName(cityName);
+        return restTemplate.getForObject(
+                "https://api.openweathermap.org/data/2.5/weather?q=" + getCityName() + 
+                "&appid=" + getWeatherApiToken() + 
+                "&lang=ru&units=metric", String.class);
     }
     
-    public String getWeather() {
+    public String getGeoWeather(String lat, String lon) {
         return restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/weather?q=Нурлат&appid=733ddc1d0dfded45e19188b329447d8c&lang=ru", String.class);
+                "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + 
+                "&lon=" + lon + "&appid=" + getWeatherApiToken() + 
+                "&lang=ru&units=metric", String.class);
+    }
+    
+    public String getGeoWeatherForecast(String lat, String lon) {
+        return restTemplate.getForObject(
+                "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + 
+                "&lon=" + lon + "&appid=" + getWeatherApiToken() + 
+                "&lang=ru&units=metric", String.class);
+    }
+    
+    public String getWeatherApiToken() {
+        return weatherApiToken;
+    }
+
+    public void setWeatherApiToken(String weatherApiToken) {
+        this.weatherApiToken = weatherApiToken;
+    }
+    
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 }
