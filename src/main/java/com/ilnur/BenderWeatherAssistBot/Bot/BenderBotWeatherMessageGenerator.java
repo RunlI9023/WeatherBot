@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class BenderBotWeatherMessageGenerator {
     private BenderBotWeatherEmoji weatherEmoji;
     private ReplyKeyboardMarkup geoLocationReplyKeyboard;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE");
+    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", Locale.of("ru", "RU"));
     String today = simpleDateFormat.format(new Date());
 
     public BenderBotWeatherMessageGenerator() {
