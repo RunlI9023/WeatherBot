@@ -54,7 +54,7 @@ public class BenderBotConfig {
         }
     
     @Bean
-    RestClient restClient() {
+    public RestClient restClient() {
         RestClient restClient = RestClient.create();
         return restClient;
     }

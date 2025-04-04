@@ -46,25 +46,26 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 @Component
 public class BenderBotWeatherMessageGenerator {
     
-    @Autowired
-    WeatherNowCurrent weatherNowCurrent;
-    @Autowired
-    ExampleForecastForCityName weatherForecastForCityName;
-    @Autowired
-    ExampleCurrentGeo exampleCurrentGeo;
-    @Autowired
-    ExampleForecastGeo exampleForecastGeo;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    BenderBotRestClient benderBotRestClient;
-    @Autowired
-    BenderBotWeatherEmoji weatherEmoji;
-    @Autowired
-    ReplyKeyboardMarkup geoLocationReplyKeyboard;
+    private WeatherNowCurrent weatherNowCurrent;
+    private ExampleForecastForCityName weatherForecastForCityName;
+    private ExampleCurrentGeo exampleCurrentGeo;
+    private ExampleForecastGeo exampleForecastGeo;
+    private BenderBotRestClient benderBotRestClient;
+    private BenderBotWeatherEmoji weatherEmoji;
+    private ReplyKeyboardMarkup geoLocationReplyKeyboard;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE");
     String today = simpleDateFormat.format(new Date());
+
+    public BenderBotWeatherMessageGenerator() {
+    }
+
+    @Autowired
+    public BenderBotWeatherMessageGenerator(BenderBotRestClient benderBotRestClient, BenderBotWeatherEmoji weatherEmoji, ReplyKeyboardMarkup geoLocationReplyKeyboard) {
+        this.benderBotRestClient = benderBotRestClient;
+        this.weatherEmoji = weatherEmoji;
+        this.geoLocationReplyKeyboard = geoLocationReplyKeyboard;
+    }
     
     public SendMessage greetingUser(Long who, String userName) {
         SendMessage greetingUserMessage = SendMessage.builder()
@@ -73,7 +74,7 @@ public class BenderBotWeatherMessageGenerator {
                 .build();
         return greetingUserMessage;
     }
-    
+
     public SendMessage forAdmin(Long who, String userName, long userId) {
         SendMessage forAdmin = SendMessage.builder()
                 .chatId(who.toString())
@@ -81,7 +82,6 @@ public class BenderBotWeatherMessageGenerator {
                 .build();
         return forAdmin;
     }
-    
 
     public SendMessage requestGeoPosition(Long who) {
         SendMessage requestGeoPositionMessage = SendMessage.builder()

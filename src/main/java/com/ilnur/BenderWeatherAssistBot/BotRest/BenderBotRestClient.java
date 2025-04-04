@@ -1,7 +1,5 @@
 package com.ilnur.BenderWeatherAssistBot.BotRest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurrent;
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ExampleForecastForCityName;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BenderBotRestClient {
