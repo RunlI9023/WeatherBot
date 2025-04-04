@@ -1,7 +1,6 @@
 package com.ilnur.BenderWeatherAssistBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ilnur.BenderWeatherAssistBot.BotRest.BenderBotRestClient;
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurrent;
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
@@ -47,6 +46,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 @Component
 public class BenderBotWeatherMessageGenerator {
     
+    private final Locale locale = Locale.of("ru", "RU");
     private WeatherNowCurrent weatherNowCurrent;
     private ExampleForecastForCityName weatherForecastForCityName;
     private ExampleCurrentGeo exampleCurrentGeo;
@@ -54,9 +54,9 @@ public class BenderBotWeatherMessageGenerator {
     private BenderBotRestClient benderBotRestClient;
     private BenderBotWeatherEmoji weatherEmoji;
     private ReplyKeyboardMarkup geoLocationReplyKeyboard;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", Locale.of("ru", "RU"));
-    String today = simpleDateFormat.format(new Date());
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", locale);
+    private String today = simpleDateFormat.format(new Date());
 
     public BenderBotWeatherMessageGenerator() {
     }
