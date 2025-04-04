@@ -73,6 +73,7 @@ public class BenderBotWeatherMessageGenerator {
                 .build();
         return greetingUserMessage;
     }
+    
 
     public SendMessage requestGeoPosition(Long who) {
         SendMessage requestGeoPositionMessage = SendMessage.builder()
@@ -94,12 +95,12 @@ public class BenderBotWeatherMessageGenerator {
     }
     
     public SendMessage weatherForecastForGeoposition(Long who) throws JsonProcessingException, ParseException {
-        exampleCurrentGeo = objectMapper.readValue(benderBotRestClient.getCurrentWeatherForGeoposition(
+        exampleCurrentGeo = benderBotRestClient.getCurrentWeatherForGeoposition(
                      benderBotRestClient.getGeoLatitude().toString(), 
-                     benderBotRestClient.getGeoLongitude().toString()), ExampleCurrentGeo.class);
-        exampleForecastGeo = objectMapper.readValue(benderBotRestClient.getWeatherForecastForGeoposition(
+                     benderBotRestClient.getGeoLongitude().toString());
+        exampleForecastGeo = benderBotRestClient.getWeatherForecastForGeoposition(
                      benderBotRestClient.getGeoLatitude().toString(), 
-                     benderBotRestClient.getGeoLongitude().toString()), ExampleForecastGeo.class);
+                     benderBotRestClient.getGeoLongitude().toString());
         
         String weatherEmojiForGeoposition = "";
         switch(exampleCurrentGeo.getDescription()) {
@@ -176,10 +177,8 @@ public class BenderBotWeatherMessageGenerator {
     }
     
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
-        weatherForecastForCityName = objectMapper.readValue(benderBotRestClient
-                .getWeatherForecastForCityName(city), ExampleForecastForCityName.class);
-        weatherNowCurrent = objectMapper.readValue(benderBotRestClient
-                .getCurrentWeatherForCityName(city), WeatherNowCurrent.class);
+        weatherForecastForCityName = benderBotRestClient.getWeatherForecastForCityName(city);
+        weatherNowCurrent = benderBotRestClient.getCurrentWeatherForCityName(city);
         String currentWeatherEmoji = "";
         switch(weatherNowCurrent.getDescription()) {
                             case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloudPars();

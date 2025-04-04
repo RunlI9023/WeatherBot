@@ -19,16 +19,17 @@ public class BenderBot extends TelegramLongPollingBot {
     
     @Value("${botApiToken}")
     private String botApiToken;
-    @Value("${adminId}")
-    private long adminId;
     @Value("${botUserName}")
     private String botUserName;
+    @Value("${adminId}")
+    private long adminId;
+    private long userId;
+    private String userName;
     @Autowired
     private BenderBotRestClient benderBotRestClient;
     @Autowired
     private BenderBotWeatherMessageGenerator benderBotWeatherMessage;
-    private long userId;
-    private String userName;
+    
     
    
     @Override

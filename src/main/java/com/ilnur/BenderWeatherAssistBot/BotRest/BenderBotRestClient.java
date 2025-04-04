@@ -3,10 +3,14 @@ package com.ilnur.BenderWeatherAssistBot.BotRest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurrent;
+import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ExampleForecastForCityName;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ExampleForecastGeo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -14,54 +18,63 @@ public class BenderBotRestClient {
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
-    ObjectMapper objectMapper;
-    @Value("${weather.apitoken}")
+    private ObjectMapper objectMapper;
+
+    private RestClient restClient;
+    @Value("${weatherApiToken}")
     private String weatherApiToken;
-    @Value("${weather.city_name}")
     private String cityName;
     private Double geoLatitude;
     private Double geoLongitude;
-//    WeatherNowCurrent weatherNowCurrent;
-//    ExampleForecastForCityName weatherForecastForCityName;
-//
-//    public WeatherNowCurrent getWeatherNowCurrent() throws JsonProcessingException{
-//        WeatherNowCurrent weatherNowCurrent;
-//        return weatherNowCurrent = objectMapper.readValue(getCurrentWeatherForCityName(cityName), WeatherNowCurrent.class);
-//    }
-//    
-//    public ExampleForecastForCityName getWeatherForecastForCityName() throws JsonProcessingException{
-//        ExampleForecastForCityName weatherForecastForCityName;
-//        return weatherForecastForCityName = objectMapper.readValue(getWeatherForecastForCityName(cityName), ExampleForecastForCityName.class);
-//    }
 
-    public String getCurrentWeatherForCityName(String cityName) {
+    public BenderBotRestClient() {
+    }
+
+    @Autowired
+    public BenderBotRestClient(RestClient restClient) {
+        this.restClient = restClient;
+    }
+
+    public WeatherNowCurrent getCurrentWeatherForCityName(String cityName) {
         setCityName(cityName);
-        return restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/weather?q=" + getCityName() + 
-                "&appid=" + getWeatherApiToken() + 
-                        "&lang=ru&units=metric", String.class);
+        return restClient
+        .get()
+        .uri("https://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={weatherApiToken}&lang=ru&units=metric", 
+                getCityName(), getWeatherApiToken())
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .body(WeatherNowCurrent.class);
     }
     
-    public String getWeatherForecastForCityName(String cityName) {
+    public ExampleForecastForCityName getWeatherForecastForCityName(String cityName) {
         setCityName(cityName);
-        return restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/forecast?q=" + getCityName() + 
-                "&appid=" + getWeatherApiToken() + 
-                "&lang=ru&units=metric", String.class);
+        return restClient
+        .get()
+        .uri("https://api.openweathermap.org/data/2.5/forecast?q={cityName}&appid={weatherApiToken}&lang=ru&units=metric", 
+                getCityName(), getWeatherApiToken())
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .body(ExampleForecastForCityName.class);
     }
     
-    public String getCurrentWeatherForGeoposition(String lat, String lon) {
-        return restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + 
-                "&lon=" + lon + "&appid=" + getWeatherApiToken() + 
-                "&lang=ru&units=metric", String.class);
+    public ExampleCurrentGeo getCurrentWeatherForGeoposition(String lat, String lon) {
+        return restClient
+        .get()
+        .uri("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
+                lat, lon, getWeatherApiToken())
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .body(ExampleCurrentGeo.class);
     }
     
-    public String getWeatherForecastForGeoposition(String lat, String lon) {
-        return restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + 
-                "&lon=" + lon + "&appid=" + getWeatherApiToken() + 
-                "&lang=ru&units=metric", String.class);
+    public ExampleForecastGeo getWeatherForecastForGeoposition(String lat, String lon) {
+        return restClient
+        .get()
+        .uri("https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
+                lat, lon, getWeatherApiToken())
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .body(ExampleForecastGeo.class);
     }
     
     public String getWeatherApiToken() {
