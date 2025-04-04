@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -22,6 +23,8 @@ public class BenderBot extends TelegramLongPollingBot {
     BenderBotWeatherMessageGenerator benderBotWeatherMessage;
     private long userId;
     private String userName;
+    @Value("${botApiToken}")
+    private String botApiToken;
    
     @Override
     public void onUpdateReceived(Update update) {
@@ -67,7 +70,7 @@ public class BenderBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "7674073133:AAF3xggzSOlapjh-utegVAeGCh4zxMkQM3Y";
+        return botApiToken;
     }
     
     @Override
