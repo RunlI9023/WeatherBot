@@ -22,9 +22,9 @@ public class BenderBot extends TelegramLongPollingBot {
     @Value("${adminId}")
     private long adminId;
     @Autowired
-    BenderBotRestClient benderBotRestClient;
+    private BenderBotRestClient benderBotRestClient;
     @Autowired
-    BenderBotWeatherMessageGenerator benderBotWeatherMessage;
+    private BenderBotWeatherMessageGenerator benderBotWeatherMessage;
     private long userId;
     private String userName;
     
