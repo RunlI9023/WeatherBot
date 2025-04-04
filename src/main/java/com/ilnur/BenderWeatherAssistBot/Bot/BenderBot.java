@@ -21,6 +21,8 @@ public class BenderBot extends TelegramLongPollingBot {
     private String botApiToken;
     @Value("${adminId}")
     private long adminId;
+    @Value("${botUserName}")
+    private String botUserName;
     @Autowired
     private BenderBotRestClient benderBotRestClient;
     @Autowired
@@ -78,7 +80,7 @@ public class BenderBot extends TelegramLongPollingBot {
     
     @Override
     public String getBotUsername() {
-        return "Bender_Bot_Assistant";
+        return botUserName;
     }
     
     public void sendMess(SendMessage message) {
