@@ -15,13 +15,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BenderBotRestClient {
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private RestClient restClient;
-    @Value("${weatherApiToken}")
+    @Value("${openWeatherMapApiToken}")
     private String weatherApiToken;
     private String cityName;
     private Double geoLatitude;
@@ -108,4 +104,6 @@ public class BenderBotRestClient {
     public void setGeoLongitude(Double geoLongitude) {
         this.geoLongitude = geoLongitude;
     }
+    
+    
 }

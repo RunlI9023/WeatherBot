@@ -2,13 +2,10 @@ package com.ilnur.BenderWeatherAssistBot.Bot;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -26,11 +23,6 @@ public class BenderBotConfig {
         api.registerBot(benderBot);
             return api;
         }
-    
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-            return builder.build();
-	}
     
     @Bean
     public ReplyKeyboardMarkup geoLocationReplyKeyboard() {

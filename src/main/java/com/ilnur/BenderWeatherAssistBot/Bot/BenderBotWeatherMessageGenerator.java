@@ -74,6 +74,14 @@ public class BenderBotWeatherMessageGenerator {
         return greetingUserMessage;
     }
     
+    public SendMessage forAdmin(Long who, String userName, long userId) {
+        SendMessage forAdmin = SendMessage.builder()
+                .chatId(who.toString())
+                .text("Присоединился новый пользователь, имя: " + userName + ", ID: " + userId)
+                .build();
+        return forAdmin;
+    }
+    
 
     public SendMessage requestGeoPosition(Long who) {
         SendMessage requestGeoPositionMessage = SendMessage.builder()

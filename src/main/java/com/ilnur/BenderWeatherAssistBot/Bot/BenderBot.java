@@ -30,38 +30,36 @@ public class BenderBot extends TelegramLongPollingBot {
     @Autowired
     private BenderBotWeatherMessageGenerator benderBotWeatherMessage;
     
-    
-   
     @Override
     public void onUpdateReceived(Update update) {
             
         if (update.hasMessage() && !update.getMessage().hasLocation() && update.getMessage().getText().equals("/start")) {
             setUserId(update.getMessage().getFrom().getId());
             setUserName(update.getMessage().getFrom().getFirstName());
-            System.out.println("Username: " + getUserName() + ", userID: " + getUserId());
                 sendMess(benderBotWeatherMessage.greetingUser(getUserId(), getUserName()));
                 sendMess(benderBotWeatherMessage.requestGeoPosition(getUserId()));
+                if (!update.getMessage().getFrom().getId().equals(adminId)) {
+                    sendMess(benderBotWeatherMessage.forAdmin(adminId, getUserName(), getUserId()));
+                }
         }
         else if(update.getMessage().hasLocation()) {
                 setUserId(update.getMessage().getFrom().getId());
                 benderBotRestClient.setGeoLatitude(update.getMessage().getLocation().getLatitude());
                 benderBotRestClient.setGeoLongitude(update.getMessage().getLocation().getLongitude());
-                System.out.println(benderBotRestClient.getGeoLatitude() + ", " +  benderBotRestClient.getGeoLongitude());
                 try {
-                            sendMess(benderBotWeatherMessage.weatherForecastForGeoposition(getUserId()));
+                    sendMess(benderBotWeatherMessage.weatherForecastForGeoposition(getUserId()));
                 } catch (JsonProcessingException e) {
                     System.out.println("JsonProcessingException: " + e);
                 } catch (HttpClientErrorException e) {
                     System.out.println("Город не найден. " + e);
                 } catch (ParseException ex) {
-                Logger.getLogger(BenderBot.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                    Logger.getLogger(BenderBot.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         else if (!"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
             setUserId(update.getMessage().getFrom().getId());
             String city = update.getMessage().getText();
             try {
-
                 sendMess(benderBotWeatherMessage.weatherForecastForCityName(getUserId(), city));
             } catch (HttpClientErrorException e) {
                 sendMess(benderBotWeatherMessage.cityNotFound(getUserId()));
