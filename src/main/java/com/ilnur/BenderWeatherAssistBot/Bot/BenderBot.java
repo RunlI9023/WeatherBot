@@ -17,14 +17,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class BenderBot extends TelegramLongPollingBot {
     
+    @Value("${botApiToken}")
+    private String botApiToken;
+    @Value("${adminId}")
+    private long adminId;
     @Autowired
     BenderBotRestClient benderBotRestClient;
     @Autowired
     BenderBotWeatherMessageGenerator benderBotWeatherMessage;
     private long userId;
     private String userName;
-    @Value("${botApiToken}")
-    private String botApiToken;
+    
    
     @Override
     public void onUpdateReceived(Update update) {
