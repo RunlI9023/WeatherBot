@@ -6,8 +6,8 @@ import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurr
 import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ExampleForecastGeo;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ExampleForecastForCityName;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ForecastMessageForGrouping;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ResultForecastMessage;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ResultForecastMessageEnd;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ResultForecastMessageEndForGeoposition;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ResultForecastMessageForGeoposition;
 import java.text.ParseException;
@@ -113,21 +113,21 @@ public class BenderBotWeatherMessageGenerator {
         
         String weatherEmojiForGeoposition = "";
         switch(exampleCurrentGeo.getDescription()) {
-                            case "переменная облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudPars();
+                            case "переменная облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getCloud();
                                 break;}
-                            case "облачно с прояснениями" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunBehindCloudPars();
+                            case "облачно с прояснениями" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunBehindCloud();
                                 break;}
-                            case "пасмурно" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudPars();
+                            case "пасмурно" -> {weatherEmojiForGeoposition = weatherEmoji.getCloud();
                                 break;}
-                            case "небольшая облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunSmallCloudPars();
+                            case "небольшая облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunSmallCloud();
                                 break;}
-                            case "ясно" -> {weatherEmojiForGeoposition = weatherEmoji.getCrescentMoonPars();
+                            case "ясно" -> {weatherEmojiForGeoposition = weatherEmoji.getCrescentMoon();
                                 break;}
-                            case "небольшой снег" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudSnowPars();
+                            case "небольшой снег" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudSnow();
                                 break;}
-                            case "небольшой дождь" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudRainPars();
+                            case "небольшой дождь" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudRain();
                                 break;}
-                            case "снег" -> {weatherEmojiForGeoposition = weatherEmoji.getSnowflakePars();
+                            case "снег" -> {weatherEmojiForGeoposition = weatherEmoji.getSnowflake();
                                 break;}
         }
         String textOutForGeoposition = "";
@@ -149,7 +149,7 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForGeoposition().get(i).getDate() + ":" + textInTabOne +
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji() + textInTabTwo +
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + textInTabThree + 
-                weatherEmoji.getHumidPars() + textInTabFour + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
+                weatherEmoji.getHumidity() + textInTabFour + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
 //                + "    " + getResultForecastObjects().get(i).getDescription()
                 ;
                 textOutForGeoposition += textInForGeoposition;
@@ -164,7 +164,7 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight() + "  " +
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + "  " + 
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()) + "\u2103" + "  " +
-                weatherEmoji.getHumidPars() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
+                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
 //                + " " +
 //                getResultForecastObjects().get(i).getDescriptionOfDay() + ", " + 
 //                getResultForecastObjects().get(i).getDescriptionOfNight()
@@ -178,7 +178,7 @@ public class BenderBotWeatherMessageGenerator {
                 .text("Прогноз погоды для г. " + exampleCurrentGeo.getName() + ": " + 
                 "\nСейчас: " + weatherEmojiForGeoposition + "  " + Math.round(exampleCurrentGeo.getMain().getTempMax()) + " \u2103" +
                 ", ощущается как: " + Math.round(exampleCurrentGeo.getMain().getFeelsLike()) + " \u2103" + "  " +
-                        weatherEmoji.getHumidPars() + "  " + exampleCurrentGeo.getMain().getHumidity() + "%"
+                        weatherEmoji.getHumidity() + "  " + exampleCurrentGeo.getMain().getHumidity() + "%"
 //                        + weatherNowCurrent.getDescription() 
                         + textOutForGeoposition)
                 .build();
@@ -190,21 +190,21 @@ public class BenderBotWeatherMessageGenerator {
         weatherNowCurrent = benderBotRestClient.getCurrentWeatherForCityName(city);
         String currentWeatherEmoji = "";
         switch(weatherNowCurrent.getDescription()) {
-                            case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloudPars();
+                            case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloud();
                                 break;}
-                            case "облачно с прояснениями" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunBehindCloudPars();
+                            case "облачно с прояснениями" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunBehindCloud();
                                 break;}
-                            case "пасмурно" -> {currentWeatherEmoji = weatherEmoji.getCloudPars();
+                            case "пасмурно" -> {currentWeatherEmoji = weatherEmoji.getCloud();
                                 break;}
-                            case "небольшая облачность" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunSmallCloudPars();
+                            case "небольшая облачность" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunSmallCloud();
                                 break;}
-                            case "ясно" -> {currentWeatherEmoji = weatherEmoji.getCrescentMoonPars();
+                            case "ясно" -> {currentWeatherEmoji = weatherEmoji.getCrescentMoon();
                                 break;}
-                            case "небольшой снег" -> {currentWeatherEmoji = weatherEmoji.getCloudSnowPars();
+                            case "небольшой снег" -> {currentWeatherEmoji = weatherEmoji.getCloudSnow();
                                 break;}
-                            case "небольшой дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRainPars();
+                            case "небольшой дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRain();
                                 break;}
-                            case "снег" -> {currentWeatherEmoji = weatherEmoji.getSnowflakePars();
+                            case "снег" -> {currentWeatherEmoji = weatherEmoji.getSnowflake();
                                 break;}
         }
         String textOut = "";
@@ -226,7 +226,7 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getDate() + ":" + textInTabOne +
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmoji() + textInTabTwo +
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMaximum()) + "\u2103" + textInTabThree + 
-                weatherEmoji.getHumidPars() + textInTabFour + getResultForecastObjectsForCityName().get(i).getHumidity() + "%"
+                weatherEmoji.getHumidity() + textInTabFour + getResultForecastObjectsForCityName().get(i).getHumidity() + "%"
 //                + "    " + getResultForecastObjects().get(i).getDescription()
                 ;
                 textOut += textIn;
@@ -241,7 +241,7 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfNight() + "  " +
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMaximum()) + "\u2103" + "  " + 
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMinimum()) + "\u2103" + "  " +
-                weatherEmoji.getHumidPars() + " " + getResultForecastObjectsForCityName().get(i).getHumidity() + "%"
+                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForCityName().get(i).getHumidity() + "%"
 //                + " " +
 //                getResultForecastObjects().get(i).getDescriptionOfDay() + ", " + 
 //                getResultForecastObjects().get(i).getDescriptionOfNight()
@@ -255,51 +255,51 @@ public class BenderBotWeatherMessageGenerator {
                 .text("Прогноз погоды для г. " + weatherNowCurrent.getName() + ": " + 
                 "\nСейчас: " + currentWeatherEmoji + "  " + Math.round(weatherNowCurrent.getMain().getTempMax()) + " \u2103" +
                 ", ощущается как: " + Math.round(weatherNowCurrent.getMain().getFeelsLike()) + " \u2103" + "  " +
-                        weatherEmoji.getHumidPars() + "  " + weatherNowCurrent.getMain().getHumidity() + "%"
+                        weatherEmoji.getHumidity() + "  " + weatherNowCurrent.getMain().getHumidity() + "%"
 //                        + weatherNowCurrent.getDescription() 
                         + textOut)
                 .build();
         return weatherForecastForCityNameMessage;
     }
     
-    public List<ResultForecastMessageEnd> getResultForecastObjectsForCityName() throws ParseException {
-        List<ResultForecastMessageEnd> forecastMessageListEnd = new ArrayList<>();
+    public List<ResultForecastMessage> getResultForecastObjectsForCityName() throws ParseException {
+        List<ResultForecastMessage> resultForecastMessageListForCityName = new ArrayList<>();
         String dayOfWeek;
         Double tmpMax;
         Double tmpMin;
         Integer humid;
         
-        for (Map.Entry<String, List<ResultForecastMessage>> entry : weatherForecastForCityName.resultForecastMessage().entrySet()) {
-            ResultForecastMessageEnd resultForecastMessageEnd = new ResultForecastMessageEnd();
+        for (Map.Entry<String, List<ForecastMessageForGrouping>> entry : weatherForecastForCityName.resultForecastMessage().entrySet()) {
+            ResultForecastMessage resultForecastMessage = new ResultForecastMessage();
             Date dt = simpleDateFormat.parse(entry.getKey()); 
             if (today.equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
-                    ResultForecastMessageEnd resultForecastMessageEnd2 = new ResultForecastMessageEnd();
+                    ResultForecastMessage resultForecastMessageEnd2 = new ResultForecastMessage();
                     resultForecastMessageEnd2.setDate(entry.getValue().get(i).getDate().substring(11, 16) + " ч");
                     resultForecastMessageEnd2.setDayOfWeek(today);
                     resultForecastMessageEnd2.setTempMaximum(entry.getValue().get(i).getTempMaximum());
                     resultForecastMessageEnd2.setHumidity(entry.getValue().get(i).getHumidity());
                     resultForecastMessageEnd2.setDescription(entry.getValue().get(i).getDescription());
                         switch(entry.getValue().get(i).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloud());
                                 break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloud());
                                 break;}
-                            case "пасмурно" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloud());
                                 break;}
-                            case "небольшая облачность" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloud());
                                 break;}
-                            case "ясно" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getSunnyPars());
+                            case "ясно" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getSunny());
                                 break;}
-                            case "небольшой снег" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudSnow());
                                 break;}
-                            case "небольшой дождь" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getCloudRain());
                                 break;}
-                            case "снег" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessageEnd2.setDescriptionEmoji(weatherEmoji.getSnowflake());
                                 break;
                             }
                         }
-                    forecastMessageListEnd.add(resultForecastMessageEnd2);
+                    resultForecastMessageListForCityName.add(resultForecastMessageEnd2);
                 }
             }
             else {
@@ -317,83 +317,83 @@ public class BenderBotWeatherMessageGenerator {
                     .map(r -> r.getHumidity())
                     .collect(Collectors.toList()));
             
-            resultForecastMessageEnd.setDate(dayOfWeek);
-            resultForecastMessageEnd.setDayOfWeek(dayOfWeek);
-            resultForecastMessageEnd.setTempMaximum(tmpMax);
-            resultForecastMessageEnd.setTempMinimum(tmpMin);
-            resultForecastMessageEnd.setHumidity(humid);
+            resultForecastMessage.setDate(dayOfWeek);
+            resultForecastMessage.setDayOfWeek(dayOfWeek);
+            resultForecastMessage.setTempMaximum(tmpMax);
+            resultForecastMessage.setTempMinimum(tmpMin);
+            resultForecastMessage.setHumidity(humid);
             for (int j = 0; j < entry.getValue().size(); j++) {
                 switch (entry.getValue().get(j).getDate().substring(11, 16)) {
                     case "12:00" -> {
-                        resultForecastMessageEnd.setDescriptionOfDay(entry.getValue().get(j).getDescription());
+                        resultForecastMessage.setDescriptionOfDay(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getSunnyPars());
+                            case "ясно" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getSunny());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEnd.setDescriptionEmojiOfDay(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessage.setDescriptionEmojiOfDay(weatherEmoji.getSnowflake());
                             break;
                             }
                         }
                     }
                     case "00:00" -> {
-                        resultForecastMessageEnd.setDescriptionOfNight(entry.getValue().get(j).getDescription());
+                        resultForecastMessage.setDescriptionOfNight(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getCrescentMoonPars());
+                            case "ясно" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getCrescentMoon());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEnd.setDescriptionEmojiOfNight(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessage.setDescriptionEmojiOfNight(weatherEmoji.getSnowflake());
                             break;}
                         }
                     }
                     default -> {
-                        resultForecastMessageEnd.setDescription(entry.getValue().get(j).getDescription());
+                        resultForecastMessage.setDescription(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getCrescentMoonPars());
+                            case "ясно" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getCrescentMoon());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEnd.setDescriptionEmoji(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessage.setDescriptionEmoji(weatherEmoji.getSnowflake());
                             break;}
                         }
                     }
                 }
             }
-            forecastMessageListEnd.add(resultForecastMessageEnd);
+            resultForecastMessageListForCityName.add(resultForecastMessage);
             }
         }
-        return forecastMessageListEnd;
+        return resultForecastMessageListForCityName;
     }
     
     public List<ResultForecastMessageEndForGeoposition> getResultForecastObjectsForGeoposition() throws ParseException {
@@ -415,21 +415,21 @@ public class BenderBotWeatherMessageGenerator {
                     resultForecastMessageEndForGeoposition2.setHumidity(entry.getValue().get(i).getHumidity());
                     resultForecastMessageEndForGeoposition2.setDescription(entry.getValue().get(i).getDescription());
                         switch(entry.getValue().get(i).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloud());
                                 break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloud());
                                 break;}
-                            case "пасмурно" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloud());
                                 break;}
-                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloud());
                                 break;}
-                            case "ясно" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getSunnyPars());
+                            case "ясно" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getSunny());
                                 break;}
-                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudSnow());
                                 break;}
-                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getCloudRain());
                                 break;}
-                            case "снег" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessageEndForGeoposition2.setDescriptionEmoji(weatherEmoji.getSnowflake());
                                 break;
                             }
                         }
@@ -461,21 +461,21 @@ public class BenderBotWeatherMessageGenerator {
                     case "12:00" -> {
                         resultForecastMessageEndForGeoposition.setDescriptionOfDay(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getSunnyPars());
+                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getSunny());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfDay(weatherEmoji.getSnowflake());
                             break;
                             }
                         }
@@ -483,42 +483,42 @@ public class BenderBotWeatherMessageGenerator {
                     case "00:00" -> {
                         resultForecastMessageEndForGeoposition.setDescriptionOfNight(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCrescentMoonPars());
+                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCrescentMoon());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmojiOfNight(weatherEmoji.getSnowflake());
                             break;}
                         }
                     }
                     default -> {
                         resultForecastMessageEndForGeoposition.setDescription(entry.getValue().get(j).getDescription());
                         switch(entry.getValue().get(j).getDescription()) {
-                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "переменная облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloud());
                             break;}
-                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloudPars());
+                            case "облачно с прояснениями" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getWhiteSunBehindCloud());
                             break;}
-                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudPars());
+                            case "пасмурно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloud());
                             break;}
-                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloudPars());
+                            case "небольшая облачность" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getWhiteSunSmallCloud());
                             break;}
-                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCrescentMoonPars());
+                            case "ясно" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCrescentMoon());
                             break;}
-                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudSnowPars());
+                            case "небольшой снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudSnow());
                             break;}
-                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudRainPars());
+                            case "небольшой дождь" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getCloudRain());
                             break;}
-                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getSnowflakePars());
+                            case "снег" -> {resultForecastMessageEndForGeoposition.setDescriptionEmoji(weatherEmoji.getSnowflake());
                             break;}
                         }
                     }

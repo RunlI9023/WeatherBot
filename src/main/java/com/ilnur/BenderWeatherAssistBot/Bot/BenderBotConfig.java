@@ -1,5 +1,6 @@
 package com.ilnur.BenderWeatherAssistBot.Bot;
 
+import com.vdurmont.emoji.EmojiManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.Bean;

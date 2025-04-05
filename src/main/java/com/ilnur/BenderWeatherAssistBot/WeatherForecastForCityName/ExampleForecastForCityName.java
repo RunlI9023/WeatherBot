@@ -2,8 +2,11 @@ package com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -23,12 +26,16 @@ public class ExampleForecastForCityName {
     private java.util.List<ListForecastForCityName> list;
     @JsonProperty("city")
     private CityForecastForCityName city;
+    
+    private final Locale locale = Locale.of("ru", "RU");
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", locale);
+    private String today = simpleDateFormat.format(new Date());
 
     public ExampleForecastForCityName() {
     }
 
     public ExampleForecastForCityName(String cod, Integer message, Integer cnt, java.util.List<ListForecastForCityName> list, CityForecastForCityName city) {
-        //super();
         this.cod = cod;
         this.message = message;
         this.cnt = cnt;
@@ -146,10 +153,10 @@ public class ExampleForecastForCityName {
                 .collect(Collectors.toList());
     }
     
-    public List<ResultForecastMessage> weatherForecastObjectsFilling() {
-        List<ResultForecastMessage> forecastMessageList = new ArrayList<>();
+    public List<ForecastMessageForGrouping> weatherForecastObjectsFilling() {
+        List<ForecastMessageForGrouping> forecastMessageList = new ArrayList<>();
         for (int i = 0; i < getDtTxt().size(); i++) {
-            ResultForecastMessage resultForecastMessage = new ResultForecastMessage();
+            ForecastMessageForGrouping resultForecastMessage = new ForecastMessageForGrouping();
             resultForecastMessage.setDate(getDtTxt().get(i));
             resultForecastMessage.setDescription(getDescription().get(i));
             resultForecastMessage.setTempMaximum(getTempMax().get(i));
@@ -165,13 +172,13 @@ public class ExampleForecastForCityName {
         return forecastMessageList;
     } 
        
-    public Map<String, List<ResultForecastMessage>> groupingForecastMessageByDate() {
+    public Map<String, List<ForecastMessageForGrouping>> groupingForecastMessageByDate() {
         return weatherForecastObjectsFilling()
             .stream()
             .collect(Collectors.groupingBy(d -> d.getDate().substring(0, 10)));
     }
     
-    public Map<String, List<ResultForecastMessage>> resultForecastMessage() {
+    public Map<String, List<ForecastMessageForGrouping>> resultForecastMessage() {
             return new TreeMap<>(groupingForecastMessageByDate());
     }
 }
