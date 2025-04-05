@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExampleCurrentGeo {
+public class CurrentWeatherForGeoposition {
 
     @JsonProperty("coord")
     private CoordCurrentGeo coord;
@@ -38,10 +38,10 @@ public class ExampleCurrentGeo {
     @JsonProperty("cod")
     private Integer cod;
 
-    public ExampleCurrentGeo() {
+    public CurrentWeatherForGeoposition() {
     }
 
-    public ExampleCurrentGeo(CoordCurrentGeo coord, List<WeatherCurrentGeo> weather, String base, MainCurrentGeo main, Integer visibility, WindCurrentGeo wind, CloudCurrentGeo clouds, Integer dt, SysCurrentGeo sys, Integer timezone, Integer id, String name, Integer cod) {
+    public CurrentWeatherForGeoposition(CoordCurrentGeo coord, List<WeatherCurrentGeo> weather, String base, MainCurrentGeo main, Integer visibility, WindCurrentGeo wind, CloudCurrentGeo clouds, Integer dt, SysCurrentGeo sys, Integer timezone, Integer id, String name, Integer cod) {
         this.coord = coord;
         this.weather = weather;
         this.base = base;

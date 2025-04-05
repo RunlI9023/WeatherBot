@@ -2,16 +2,18 @@ package com.ilnur.BenderWeatherAssistBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ilnur.BenderWeatherAssistBot.BotRest.BenderBotRestClient;
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurrent;
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ExampleForecastGeo;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ExampleForecastForCityName;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ForecastMessageForGrouping;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ResultForecastMessage;
+import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.CurrentWeatherForCityName;
+import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.CurrentWeatherForGeoposition;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.WeatherForecastFoGeoposition;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.WeatherForecastForCityNameMain;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ForecastObjectForGrouping;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ResultForecastObjectForTGMessage;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ResultForecastMessageEndForGeoposition;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ResultForecastMessageForGeoposition;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -41,22 +43,36 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
  * 
  * выравнивание сообщения сделать, эмодзи описания погоды сегодян с 10 символа, дней недели с 15 символа начинать
  * далее один tab (4 пробела)
+ * 
+ * возврат из httpie "2025-04-05 09:00:00";
+ * 
+ * DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+ * LocalTime time = LocalTime.parse("23:59:59", dtf);
+ * 23:59:59
  */
 
 @Component
 public class BenderBotWeatherMessageGenerator {
     
-    private final Locale locale = Locale.of("ru", "RU");
-    private WeatherNowCurrent weatherNowCurrent;
-    private ExampleForecastForCityName weatherForecastForCityName;
-    private ExampleCurrentGeo exampleCurrentGeo;
-    private ExampleForecastGeo exampleForecastGeo;
+    private CurrentWeatherForCityName currentWeatherForCityName;
+    private WeatherForecastForCityNameMain weatherForecastForCityNameMain;
+    private CurrentWeatherForGeoposition currentWeatherForGeoposition;
+    private WeatherForecastFoGeoposition weatherForecastFoGeoposition;
     private BenderBotRestClient benderBotRestClient;
     private BenderBotWeatherEmoji weatherEmoji;
     private ReplyKeyboardMarkup geoLocationReplyKeyboard;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private final SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", locale);
+    private final SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("EEEE", Locale.of("ru", "RU"));
     private String today = simpleDateFormat.format(new Date());
+    
+    private final LocalDate date = LocalDate.now();
+    private final DateTimeFormatter formatForDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter formatForFullDate = DateTimeFormatter.ofPattern("d MMMM yyyy г.", Locale.of("ru", "RU"));
+    private final DateTimeFormatter formatForDayOfWeek = DateTimeFormatter.ofPattern("EEEE", Locale.of("ru", "RU"));
+    private final DateTimeFormatter formatForHours = DateTimeFormatter.ofPattern("EEEE");
+    private final String dayOfWeekForMess = date.format(formatForDayOfWeek);
+    private final String today2 = date.format(formatForFullDate);
+    //LocalDate parsedDate = LocalDate.parse(text, formatter);
 
     public BenderBotWeatherMessageGenerator() {
     }
@@ -71,7 +87,7 @@ public class BenderBotWeatherMessageGenerator {
     public SendMessage greetingUser(Long who, String userName) {
         SendMessage greetingUserMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text("Привет, " + userName + "!")
+                .text("Привет, " + userName + "! \nСегодня " + dayOfWeekForMess + ", " + today2 + "\n")
                 .build();
         return greetingUserMessage;
     }
@@ -104,15 +120,15 @@ public class BenderBotWeatherMessageGenerator {
     }
     
     public SendMessage weatherForecastForGeoposition(Long who) throws JsonProcessingException, ParseException {
-        exampleCurrentGeo = benderBotRestClient.getCurrentWeatherForGeoposition(
+        currentWeatherForGeoposition = benderBotRestClient.getCurrentWeatherForGeoposition(
                      benderBotRestClient.getGeoLatitude().toString(), 
                      benderBotRestClient.getGeoLongitude().toString());
-        exampleForecastGeo = benderBotRestClient.getWeatherForecastForGeoposition(
+        weatherForecastFoGeoposition = benderBotRestClient.getWeatherForecastForGeoposition(
                      benderBotRestClient.getGeoLatitude().toString(), 
                      benderBotRestClient.getGeoLongitude().toString());
         
         String weatherEmojiForGeoposition = "";
-        switch(exampleCurrentGeo.getDescription()) {
+        switch(currentWeatherForGeoposition.getDescription()) {
                             case "переменная облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getCloud();
                                 break;}
                             case "облачно с прояснениями" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunBehindCloud();
@@ -175,10 +191,10 @@ public class BenderBotWeatherMessageGenerator {
         
         SendMessage weatherForecastForGeopositionMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text("Прогноз погоды для г. " + exampleCurrentGeo.getName() + ": " + 
-                "\nСейчас: " + weatherEmojiForGeoposition + "  " + Math.round(exampleCurrentGeo.getMain().getTempMax()) + " \u2103" +
-                ", ощущается как: " + Math.round(exampleCurrentGeo.getMain().getFeelsLike()) + " \u2103" + "  " +
-                        weatherEmoji.getHumidity() + "  " + exampleCurrentGeo.getMain().getHumidity() + "%"
+                .text("Прогноз погоды для г. " + currentWeatherForGeoposition.getName() + ": " + 
+                "\nСейчас: " + weatherEmojiForGeoposition + "  " + Math.round(currentWeatherForGeoposition.getMain().getTempMax()) + " \u2103" +
+                ", ощущается как: " + Math.round(currentWeatherForGeoposition.getMain().getFeelsLike()) + " \u2103" + "  " +
+                        weatherEmoji.getHumidity() + "  " + currentWeatherForGeoposition.getMain().getHumidity() + "%"
 //                        + weatherNowCurrent.getDescription() 
                         + textOutForGeoposition)
                 .build();
@@ -186,10 +202,10 @@ public class BenderBotWeatherMessageGenerator {
     }
     
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
-        weatherForecastForCityName = benderBotRestClient.getWeatherForecastForCityName(city);
-        weatherNowCurrent = benderBotRestClient.getCurrentWeatherForCityName(city);
+        weatherForecastForCityNameMain = benderBotRestClient.getWeatherForecastForCityName(city);
+        currentWeatherForCityName = benderBotRestClient.getCurrentWeatherForCityName(city);
         String currentWeatherEmoji = "";
-        switch(weatherNowCurrent.getDescription()) {
+        switch(currentWeatherForCityName.getDescription()) {
                             case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloud();
                                 break;}
                             case "облачно с прояснениями" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunBehindCloud();
@@ -252,29 +268,36 @@ public class BenderBotWeatherMessageGenerator {
 
         SendMessage weatherForecastForCityNameMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text("Прогноз погоды для г. " + weatherNowCurrent.getName() + ": " + 
-                "\nСейчас: " + currentWeatherEmoji + "  " + Math.round(weatherNowCurrent.getMain().getTempMax()) + " \u2103" +
-                ", ощущается как: " + Math.round(weatherNowCurrent.getMain().getFeelsLike()) + " \u2103" + "  " +
-                        weatherEmoji.getHumidity() + "  " + weatherNowCurrent.getMain().getHumidity() + "%"
+                .text("Прогноз погоды для г. " + currentWeatherForCityName.getName() + ": " + 
+                "\nСейчас: " + currentWeatherEmoji + "  " + Math.round(currentWeatherForCityName.getMain().getTempMax()) + " \u2103" +
+                ", ощущается как: " + Math.round(currentWeatherForCityName.getMain().getFeelsLike()) + " \u2103" + "  " +
+                        weatherEmoji.getHumidity() + "  " + currentWeatherForCityName.getMain().getHumidity() + "%"
 //                        + weatherNowCurrent.getDescription() 
                         + textOut)
                 .build();
         return weatherForecastForCityNameMessage;
     }
     
-    public List<ResultForecastMessage> getResultForecastObjectsForCityName() throws ParseException {
-        List<ResultForecastMessage> resultForecastMessageListForCityName = new ArrayList<>();
+    /*
+    *
+    *ОБРАБОТКА ОБЪЕКТОВ С ПОИСКОМ ПО НАЗВАНИЮ
+    ********************************************************************************
+    *
+    */
+    
+    public List<ResultForecastObjectForTGMessage> getResultForecastObjectsForCityName() throws ParseException {
+        List<ResultForecastObjectForTGMessage> resultForecastMessageListForCityName = new ArrayList<>();
         String dayOfWeek;
         Double tmpMax;
         Double tmpMin;
         Integer humid;
         
-        for (Map.Entry<String, List<ForecastMessageForGrouping>> entry : weatherForecastForCityName.resultForecastMessage().entrySet()) {
-            ResultForecastMessage resultForecastMessage = new ResultForecastMessage();
+        for (Map.Entry<String, List<ForecastObjectForGrouping>> entry : weatherForecastForCityNameMain.resultForecastMessage().entrySet()) {
+            ResultForecastObjectForTGMessage resultForecastMessage = new ResultForecastObjectForTGMessage();
             Date dt = simpleDateFormat.parse(entry.getKey()); 
             if (today.equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
-                    ResultForecastMessage resultForecastMessageEnd2 = new ResultForecastMessage();
+                    ResultForecastObjectForTGMessage resultForecastMessageEnd2 = new ResultForecastObjectForTGMessage();
                     resultForecastMessageEnd2.setDate(entry.getValue().get(i).getDate().substring(11, 16) + " ч");
                     resultForecastMessageEnd2.setDayOfWeek(today);
                     resultForecastMessageEnd2.setTempMaximum(entry.getValue().get(i).getTempMaximum());
@@ -396,6 +419,13 @@ public class BenderBotWeatherMessageGenerator {
         return resultForecastMessageListForCityName;
     }
     
+    /*
+    *
+    *ОБРАБОТКА ОБЪЕКТОВ С ПОИСКОМ ПО ГЕОПОЗИЦИИ
+    ********************************************************************************
+    *
+    */
+    
     public List<ResultForecastMessageEndForGeoposition> getResultForecastObjectsForGeoposition() throws ParseException {
         List<ResultForecastMessageEndForGeoposition> forecastMessageListEndForGeoposition = new ArrayList<>();
         String dayOfWeek;
@@ -403,7 +433,7 @@ public class BenderBotWeatherMessageGenerator {
         Double tmpMin;
         Integer humid;
         
-        for (Map.Entry<String, List<ResultForecastMessageForGeoposition>> entry : exampleForecastGeo.resultForecastMessageForGeoposition().entrySet()) {
+        for (Map.Entry<String, List<ResultForecastMessageForGeoposition>> entry : weatherForecastFoGeoposition.resultForecastMessageForGeoposition().entrySet()) {
             ResultForecastMessageEndForGeoposition resultForecastMessageEndForGeoposition = new ResultForecastMessageEndForGeoposition();
             Date dt = simpleDateFormat.parse(entry.getKey()); 
             if (today.equals(entry.getKey().substring(0, 10))) {

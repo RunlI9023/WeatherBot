@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExampleForecastGeo {
+public class WeatherForecastFoGeoposition {
 
     @JsonProperty("cod")
     private String cod;
@@ -24,9 +24,9 @@ public class ExampleForecastGeo {
     @JsonProperty("city")
     private CityForecastGeo city;
 
-    public ExampleForecastGeo() {}
+    public WeatherForecastFoGeoposition() {}
 
-    public ExampleForecastGeo(String cod, Integer message, Integer cnt, java.util.List<ListForecastGeo> list, CityForecastGeo city) {
+    public WeatherForecastFoGeoposition(String cod, Integer message, Integer cnt, java.util.List<ListForecastGeo> list, CityForecastGeo city) {
         super();
         this.cod = cod;
         this.message = message;

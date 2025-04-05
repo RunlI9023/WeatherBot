@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeatherNowCurrent {
+public class CurrentWeatherForCityName {
 
     @JsonProperty("coord")
     private CoordCurrent coord;
@@ -40,9 +40,9 @@ public class WeatherNowCurrent {
     @JsonProperty("weather")
     private List<WeatherCurrent> weather;   
     
-    public WeatherNowCurrent() {}
+    public CurrentWeatherForCityName() {}
 
-    public WeatherNowCurrent(CoordCurrent coord, int visibility, WindCurrent wind, RainCurrent rain, CloudsCurrent clouds, SnowCurrent snow, MainCurrent main, String base, String name, int dt, SysCurrent sys, int timezone, int id, int cod, List<WeatherCurrent> weather) {
+    public CurrentWeatherForCityName(CoordCurrent coord, int visibility, WindCurrent wind, RainCurrent rain, CloudsCurrent clouds, SnowCurrent snow, MainCurrent main, String base, String name, int dt, SysCurrent sys, int timezone, int id, int cod, List<WeatherCurrent> weather) {
         this.coord = coord;
         this.visibility = visibility;
         this.wind = wind;

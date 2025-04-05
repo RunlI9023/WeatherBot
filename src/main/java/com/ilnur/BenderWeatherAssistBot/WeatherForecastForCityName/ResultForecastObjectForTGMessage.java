@@ -1,14 +1,20 @@
 package com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName;
 
-import java.util.List;
+import com.ilnur.BenderWeatherAssistBot.Bot.BenderBotWeatherEmoji;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ForecastMessageForGrouping {
+public class ResultForecastObjectForTGMessage {
     
     private String Date;
-    //private String dayOfWeek;
+    private String DescriptionEmoji;
+    private String DescriptionEmojiOfDay;
+    private String DescriptionEmojiOfNight;
+    private String DayOfWeek;
     private String Description;
+    private String DescriptionOfDay;
+    private String DescriptionOfNight;
     private Double TempMaximum;
     private Double TempMinimum;
     private Double TempFeelsLike;
@@ -18,12 +24,17 @@ public class ForecastMessageForGrouping {
     private Integer Clouds;
     private Double WindSpeed;
 
-    public ForecastMessageForGrouping() {
-    }
+    public ResultForecastObjectForTGMessage() {}
 
-    public ForecastMessageForGrouping(String Date, String Description, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessage(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
         this.Date = Date;
+        this.DescriptionEmoji = DescriptionEmoji;
+        this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
+        this.DescriptionEmojiOfNight = DescriptionEmojiOfNight;
+        this.DayOfWeek = DayOfWeek;
         this.Description = Description;
+        this.DescriptionOfDay = DescriptionOfDay;
+        this.DescriptionOfNight = DescriptionOfNight;
         this.TempMaximum = TempMaximum;
         this.TempMinimum = TempMinimum;
         this.TempFeelsLike = TempFeelsLike;
@@ -113,7 +124,53 @@ public class ForecastMessageForGrouping {
     public void setWindSpeed(Double WindSpeed) {
         this.WindSpeed = WindSpeed;
     }
+    
+    
+    public String getDescriptionEmoji() {
+        return DescriptionEmoji;
+    }
 
+    public void setDescriptionEmoji(String DescriptionEmoji) {
+        this.DescriptionEmoji = DescriptionEmoji;
+    }
     
+    public String getDayOfWeek() {
+        return DayOfWeek;
+    }
+
+    public void setDayOfWeek(String DayOfWeek) {
+        this.DayOfWeek = DayOfWeek;
+    }
     
+    public String getDescriptionOfDay() {
+        return DescriptionOfDay;
+    }
+
+    public void setDescriptionOfDay(String DescriptionOfDay) {
+        this.DescriptionOfDay = DescriptionOfDay;
+    }
+
+    public String getDescriptionOfNight() {
+        return DescriptionOfNight;
+    }
+
+    public void setDescriptionOfNight(String DescriptionOfNight) {
+        this.DescriptionOfNight = DescriptionOfNight;
+    }
+
+    public String getDescriptionEmojiOfDay() {
+        return DescriptionEmojiOfDay;
+    }
+
+    public void setDescriptionEmojiOfDay(String DescriptionEmojiOfDay) {
+        this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
+    }
+
+    public String getDescriptionEmojiOfNight() {
+        return DescriptionEmojiOfNight;
+    }
+
+    public void setDescriptionEmojiOfNight(String DescriptionEmojiOfNight) {
+        this.DescriptionEmojiOfNight = DescriptionEmojiOfNight;
+    }
 }

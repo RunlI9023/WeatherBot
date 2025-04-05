@@ -1,9 +1,9 @@
 package com.ilnur.BenderWeatherAssistBot.BotRest;
 
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.WeatherNowCurrent;
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.ExampleCurrentGeo;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.ExampleForecastForCityName;
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.ExampleForecastGeo;
+import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.CurrentWeatherForCityName;
+import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.CurrentWeatherForGeoposition;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.WeatherForecastForCityNameMain;
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.WeatherForecastFoGeoposition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -28,7 +28,7 @@ public class BenderBotRestClient {
         this.restClient = restClient;
     }
 
-    public WeatherNowCurrent getCurrentWeatherForCityName(String cityName) {
+    public CurrentWeatherForCityName getCurrentWeatherForCityName(String cityName) {
         setCityName(cityName);
         return restClient
         .get()
@@ -36,10 +36,10 @@ public class BenderBotRestClient {
                 getCityName(), getWeatherApiToken())
         .accept(APPLICATION_JSON)
         .retrieve()
-        .body(WeatherNowCurrent.class);
+        .body(CurrentWeatherForCityName.class);
     }
     
-    public ExampleForecastForCityName getWeatherForecastForCityName(String cityName) {
+    public WeatherForecastForCityNameMain getWeatherForecastForCityName(String cityName) {
         setCityName(cityName);
         return restClient
         .get()
@@ -47,27 +47,27 @@ public class BenderBotRestClient {
                 getCityName(), getWeatherApiToken())
         .accept(APPLICATION_JSON)
         .retrieve()
-        .body(ExampleForecastForCityName.class);
+        .body(WeatherForecastForCityNameMain.class);
     }
     
-    public ExampleCurrentGeo getCurrentWeatherForGeoposition(String lat, String lon) {
+    public CurrentWeatherForGeoposition getCurrentWeatherForGeoposition(String lat, String lon) {
         return restClient
         .get()
         .uri("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
                 lat, lon, getWeatherApiToken())
         .accept(APPLICATION_JSON)
         .retrieve()
-        .body(ExampleCurrentGeo.class);
+        .body(CurrentWeatherForGeoposition.class);
     }
     
-    public ExampleForecastGeo getWeatherForecastForGeoposition(String lat, String lon) {
+    public WeatherForecastFoGeoposition getWeatherForecastForGeoposition(String lat, String lon) {
         return restClient
         .get()
         .uri("https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
                 lat, lon, getWeatherApiToken())
         .accept(APPLICATION_JSON)
         .retrieve()
-        .body(ExampleForecastGeo.class);
+        .body(WeatherForecastFoGeoposition.class);
     }
     
     public String getWeatherApiToken() {
