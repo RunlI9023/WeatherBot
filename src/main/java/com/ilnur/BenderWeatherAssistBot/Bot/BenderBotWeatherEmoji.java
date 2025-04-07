@@ -27,6 +27,9 @@ public class BenderBotWeatherEmoji {
     private String sunny = EmojiParser.parseToUnicode(":sunny:");
     private String snowflake = EmojiParser.parseToUnicode(":snowflake:");
     private String crescentMoon = EmojiParser.parseToUnicode(":crescent_moon:");
+    private String umbrella = EmojiParser.parseToUnicode(":umbrella:");
+    private String exclamation = EmojiParser.parseToUnicode(":exclamation:");
+    private String smallRedTriangleDown = EmojiParser.parseToUnicode(":small_red_triangle_down:");
 
     public BenderBotWeatherEmoji() {
     }
@@ -34,7 +37,7 @@ public class BenderBotWeatherEmoji {
     public BenderBotWeatherEmoji(String humidity, String thermometer, String windBlowingFace, String cloud, 
             String fog, String thunderCloudRain, String whiteSunSmallCloud, String whiteSunBehindCloud, 
             String whiteSunBehindCloudRain, String cloudRain, String cloudSnow, String cloudLightning, String partlySunny, 
-            String sunny, String snowflake, String crescentMoon) {
+            String sunny, String snowflake, String crescentMoon, String umbrella, String exclamation, String smallRedTriangleDown) {
         this.humidity = humidity;
         this.thermometer = thermometer;
         this.windBlowingFace = windBlowingFace;
@@ -51,6 +54,9 @@ public class BenderBotWeatherEmoji {
         this.sunny = sunny;
         this.snowflake = snowflake;
         this.crescentMoon = crescentMoon;
+        this.umbrella = umbrella;
+        this.exclamation = exclamation;
+        this.smallRedTriangleDown = smallRedTriangleDown;
     }
 
     public String getHumidity() {
@@ -115,6 +121,18 @@ public class BenderBotWeatherEmoji {
 
     public String getCrescentMoon() {
         return crescentMoon;
+    }
+
+    public String getUmbrella() {
+        return umbrella;
+    }
+
+    public String getExclamation() {
+        return exclamation;
+    }
+
+    public String getSmallRedTriangleDown() {
+        return smallRedTriangleDown;
     }
 
     

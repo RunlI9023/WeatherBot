@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResultForecastMessageForGeoposition {
+public class ForecastObjectForGroupingGeoposition {
     
     private String Date;
     //private String dayOfWeek;
@@ -19,10 +19,10 @@ public class ResultForecastMessageForGeoposition {
     private Integer Clouds;
     private Double WindSpeed;
 
-    public ResultForecastMessageForGeoposition() {
+    public ForecastObjectForGroupingGeoposition() {
     }
 
-    public ResultForecastMessageForGeoposition(String Date, String Description, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ForecastObjectForGroupingGeoposition(String Date, String Description, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
         this.Date = Date;
         this.Description = Description;
         this.TempMaximum = TempMaximum;

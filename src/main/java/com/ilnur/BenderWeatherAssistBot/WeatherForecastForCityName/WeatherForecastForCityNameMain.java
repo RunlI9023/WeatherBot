@@ -163,6 +163,7 @@ public class WeatherForecastForCityNameMain {
             resultForecastMessage.setClouds(getClouds().get(i));
             resultForecastMessage.setWindSpeed(getWindSpeed().get(i));
             forecastMessageList.add(resultForecastMessage);
+            
         }
         return forecastMessageList;
     } 

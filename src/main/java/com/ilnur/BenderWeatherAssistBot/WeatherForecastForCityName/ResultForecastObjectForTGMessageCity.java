@@ -1,18 +1,18 @@
-package com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition;
+package com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName;
 
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.*;
 import com.ilnur.BenderWeatherAssistBot.Bot.BenderBotWeatherEmoji;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResultForecastMessageEndForGeoposition {
+public class ResultForecastObjectForTGMessageCity {
     
     private String Date;
+    private String DayOfWeek;
+    private String Hours;
     private String DescriptionEmoji;
     private String DescriptionEmojiOfDay;
     private String DescriptionEmojiOfNight;
-    private String DayOfWeek;
     private String Description;
     private String DescriptionOfDay;
     private String DescriptionOfNight;
@@ -25,9 +25,9 @@ public class ResultForecastMessageEndForGeoposition {
     private Integer Clouds;
     private Double WindSpeed;
 
-    public ResultForecastMessageEndForGeoposition() {}
+    public ResultForecastObjectForTGMessageCity() {}
 
-    public ResultForecastMessageEndForGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessageCity(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
         this.Date = Date;
         this.DescriptionEmoji = DescriptionEmoji;
         this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
@@ -44,6 +44,14 @@ public class ResultForecastMessageEndForGeoposition {
         this.Visibility = Visibility;
         this.Clouds = Clouds;
         this.WindSpeed = WindSpeed;
+    }
+
+    public String getHours() {
+        return Hours;
+    }
+
+    public void setHours(String Hours) {
+        this.Hours = Hours;
     }
 
     public String getDate() {

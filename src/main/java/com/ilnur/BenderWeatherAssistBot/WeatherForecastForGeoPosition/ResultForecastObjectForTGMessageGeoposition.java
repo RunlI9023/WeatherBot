@@ -1,13 +1,15 @@
-package com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName;
+package com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition;
 
+import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.*;
 import com.ilnur.BenderWeatherAssistBot.Bot.BenderBotWeatherEmoji;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResultForecastObjectForTGMessage {
+public class ResultForecastObjectForTGMessageGeoposition {
     
     private String Date;
+    private String Hours;
     private String DescriptionEmoji;
     private String DescriptionEmojiOfDay;
     private String DescriptionEmojiOfNight;
@@ -24,9 +26,9 @@ public class ResultForecastObjectForTGMessage {
     private Integer Clouds;
     private Double WindSpeed;
 
-    public ResultForecastObjectForTGMessage() {}
+    public ResultForecastObjectForTGMessageGeoposition() {}
 
-    public ResultForecastObjectForTGMessage(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessageGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
         this.Date = Date;
         this.DescriptionEmoji = DescriptionEmoji;
         this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
@@ -44,6 +46,16 @@ public class ResultForecastObjectForTGMessage {
         this.Clouds = Clouds;
         this.WindSpeed = WindSpeed;
     }
+
+    public String getHours() {
+        return Hours;
+    }
+
+    public void setHours(String Hours) {
+        this.Hours = Hours;
+    }
+    
+    
 
     public String getDate() {
         return Date;

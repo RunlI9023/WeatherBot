@@ -146,10 +146,10 @@ public class WeatherForecastFoGeoposition {
                 .collect(Collectors.toList());
     }
     
-    public List<ResultForecastMessageForGeoposition> weatherForecastForGeopositionObjectsFilling() {
-        List<ResultForecastMessageForGeoposition> forecastMessageListForGeoposition = new ArrayList<>();
+    public List<ForecastObjectForGroupingGeoposition> weatherForecastForGeopositionObjectsFilling() {
+        List<ForecastObjectForGroupingGeoposition> forecastMessageListForGeoposition = new ArrayList<>();
         for (int i = 0; i < getDtTxt().size(); i++) {
-            ResultForecastMessageForGeoposition resultForecastMessageForGeoposition = new ResultForecastMessageForGeoposition();
+            ForecastObjectForGroupingGeoposition resultForecastMessageForGeoposition = new ForecastObjectForGroupingGeoposition();
             resultForecastMessageForGeoposition.setDate(getDtTxt().get(i));
             resultForecastMessageForGeoposition.setDescription(getDescription().get(i));
             resultForecastMessageForGeoposition.setTempMaximum(getTempMax().get(i));
@@ -165,13 +165,13 @@ public class WeatherForecastFoGeoposition {
         return forecastMessageListForGeoposition;
     } 
        
-    public Map<String, List<ResultForecastMessageForGeoposition>> groupingForecastForGeopositionMessageByDate() {
+    public Map<String, List<ForecastObjectForGroupingGeoposition>> groupingForecastForGeopositionMessageByDate() {
         return weatherForecastForGeopositionObjectsFilling()
             .stream()
             .collect(Collectors.groupingBy(d -> d.getDate().substring(0, 10)));
     }
     
-    public Map<String, List<ResultForecastMessageForGeoposition>> resultForecastMessageForGeoposition() {
+    public Map<String, List<ForecastObjectForGroupingGeoposition>> resultForecastMessageForGeoposition() {
             return new TreeMap<>(groupingForecastForGeopositionMessageByDate());
     }
 }
