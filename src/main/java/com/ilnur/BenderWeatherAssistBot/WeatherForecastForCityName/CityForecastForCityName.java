@@ -1,7 +1,9 @@
 package com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,14 +23,16 @@ public class CityForecastForCityName {
     @JsonProperty("timezone")
     private Integer timezone;
     @JsonProperty("sunrise")
-    private Integer sunrise;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private Date sunrise;
     @JsonProperty("sunset")
-    private Integer sunset;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private Date sunset;
 
     public CityForecastForCityName() {
     }
 
-    public CityForecastForCityName(Integer id, String name, CoordForecastForCityName coord, String country, Integer population, Integer timezone, Integer sunrise, Integer sunset) {
+    public CityForecastForCityName(Integer id, String name, CoordForecastForCityName coord, String country, Integer population, Integer timezone, Date sunrise, Date sunset) {
         super();
         this.id = id;
         this.name = name;
@@ -88,19 +92,19 @@ public class CityForecastForCityName {
         this.timezone = timezone;
     }
 
-    public Integer getSunrise() {
+    public Date getSunrise() {
         return sunrise;
     }
 
-    public void setSunrise(Integer sunrise) {
+    public void setSunrise(Date sunrise) {
         this.sunrise = sunrise;
     }
 
-    public Integer getSunset() {
+    public Date getSunset() {
         return sunset;
     }
 
-    public void setSunset(Integer sunset) {
+    public void setSunset(Date sunset) {
         this.sunset = sunset;
     }
 }

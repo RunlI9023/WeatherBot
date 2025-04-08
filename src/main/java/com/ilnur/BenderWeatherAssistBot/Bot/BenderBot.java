@@ -1,6 +1,7 @@
 package com.ilnur.BenderWeatherAssistBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ilnur.BenderWeatherAssistBot.BotRepository.BenderBotUserRepository;
 import com.ilnur.BenderWeatherAssistBot.BotRest.BenderBotRestClient;
 import java.text.ParseException;
 import java.util.logging.Level;
@@ -27,14 +28,16 @@ public class BenderBot extends TelegramLongPollingBot {
     private String userName;
     private BenderBotRestClient benderBotRestClient;
     private BenderBotWeatherMessageGenerator benderBotWeatherMessage;
+    private BenderBotUserRepository benderBotUserRepository;
 
     public BenderBot() {
     }
     
     @Autowired
-    public BenderBot(BenderBotRestClient benderBotRestClient, BenderBotWeatherMessageGenerator benderBotWeatherMessage) {
+    public BenderBot(BenderBotRestClient benderBotRestClient, BenderBotWeatherMessageGenerator benderBotWeatherMessage, BenderBotUserRepository benderBotUserRepository) {
         this.benderBotRestClient = benderBotRestClient;
         this.benderBotWeatherMessage = benderBotWeatherMessage;
+        this.benderBotUserRepository = benderBotUserRepository;
     }
     
     @Override
@@ -44,9 +47,11 @@ public class BenderBot extends TelegramLongPollingBot {
             setUserName(update.getMessage().getFrom().getFirstName());
                 sendMess(benderBotWeatherMessage.greetingUser(getBotUserId(), getUserName()));
                 sendMess(benderBotWeatherMessage.requestGeoPosition(getBotUserId()));
+                benderBotUserRepository.save(new BenderBotUser(getUserName(), getBotUserId()));
                 if (!update.getMessage().getFrom().getId().equals(botAdminId)) {
                     sendMess(benderBotWeatherMessage.forAdmin(botAdminId, getUserName(), getBotUserId()));
                 }
+                
         }
         else if(update.getMessage().hasLocation()) {
                 setBotUserId(update.getMessage().getFrom().getId());
@@ -67,6 +72,9 @@ public class BenderBot extends TelegramLongPollingBot {
             String city = update.getMessage().getText();
             try {
                 sendMess(benderBotWeatherMessage.weatherForecastForCityName(getBotUserId(), city));
+                benderBotUserRepository.findAll();
+                //if (getBotUserId() != benderBotUserRepository.)
+                
             } catch (HttpClientErrorException e) {
                 sendMess(benderBotWeatherMessage.cityNotFound(getBotUserId()));
                 Logger.getLogger(BenderBot.class.getName()).log(Level.INFO, e.toString());

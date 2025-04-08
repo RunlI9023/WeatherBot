@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 
 /** Exceptions for handling:
@@ -238,6 +239,7 @@ public class BenderBotWeatherMessageGenerator {
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
         weatherForecastForCityNameMain = benderBotRestClient.getWeatherForecastForCityName(city);
         currentWeatherForCityName = benderBotRestClient.getCurrentWeatherForCityName(city);
+        //geoLocationReplyKeyboard.getKeyboard().add(new KeyboardRow().add(e));
         String currentWeatherEmoji = "";
         switch(currentWeatherForCityName.getDescription()) {
                             case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloud();
@@ -259,6 +261,7 @@ public class BenderBotWeatherMessageGenerator {
                             case "снег" -> {currentWeatherEmoji = weatherEmoji.getSnowflake();
                                 break;}
         }
+        System.out.println(weatherForecastForCityNameMain.getCity().getSunrise() + " : " + weatherForecastForCityNameMain.getCity().getSunset());
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
         weatherTextForMessageCity += currentWeatherTextCity;
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
