@@ -27,29 +27,29 @@ public class BenderBot extends TelegramLongPollingBot {
     private long botUserId;
     private String userName;
     private BenderBotRestClient benderBotRestClient;
-    private BenderBotWeatherMessageGenerator benderBotWeatherMessage;
+    private BenderBotWeatherMessageGenerator benderBotWeatherMessageGenerator;
     private BenderBotUserRepository benderBotUserRepository;
 
     public BenderBot() {
     }
     
     @Autowired
-    public BenderBot(BenderBotRestClient benderBotRestClient, BenderBotWeatherMessageGenerator benderBotWeatherMessage, BenderBotUserRepository benderBotUserRepository) {
+    public BenderBot(BenderBotRestClient benderBotRestClient, BenderBotWeatherMessageGenerator benderBotWeatherMessageGenerator, BenderBotUserRepository benderBotUserRepository) {
         this.benderBotRestClient = benderBotRestClient;
-        this.benderBotWeatherMessage = benderBotWeatherMessage;
+        this.benderBotWeatherMessageGenerator = benderBotWeatherMessageGenerator;
         this.benderBotUserRepository = benderBotUserRepository;
     }
     
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && !update.getMessage().hasLocation() && update.getMessage().getText().equals("/start")) {
+            benderBotUserRepository.save(new BenderBotUser(getUserName(), getBotUserId()));
             setBotUserId(update.getMessage().getFrom().getId());
             setUserName(update.getMessage().getFrom().getFirstName());
-                sendMess(benderBotWeatherMessage.greetingUser(getBotUserId(), getUserName()));
-                sendMess(benderBotWeatherMessage.requestGeoPosition(getBotUserId()));
-                benderBotUserRepository.save(new BenderBotUser(getUserName(), getBotUserId()));
+                sendMess(benderBotWeatherMessageGenerator.greetingUser(getBotUserId(), getUserName()));
+                sendMess(benderBotWeatherMessageGenerator.requestGeoPosition(getBotUserId()));
                 if (!update.getMessage().getFrom().getId().equals(botAdminId)) {
-                    sendMess(benderBotWeatherMessage.forAdmin(botAdminId, getUserName(), getBotUserId()));
+                    sendMess(benderBotWeatherMessageGenerator.forAdmin(botAdminId, getUserName(), getBotUserId()));
                 }
                 
         }
@@ -58,7 +58,7 @@ public class BenderBot extends TelegramLongPollingBot {
                 benderBotRestClient.setGeoLatitude(update.getMessage().getLocation().getLatitude());
                 benderBotRestClient.setGeoLongitude(update.getMessage().getLocation().getLongitude());
                 try {
-                    sendMess(benderBotWeatherMessage.weatherForecastForGeoposition(getBotUserId()));
+                    sendMess(benderBotWeatherMessageGenerator.weatherForecastForGeoposition(getBotUserId()));
                 } catch (JsonProcessingException e) {
                     Logger.getLogger(BenderBot.class.getName()).log(Level.WARNING, e.toString());
                 } catch (HttpClientErrorException e) {
@@ -71,12 +71,11 @@ public class BenderBot extends TelegramLongPollingBot {
             setBotUserId(update.getMessage().getFrom().getId());
             String city = update.getMessage().getText();
             try {
-                sendMess(benderBotWeatherMessage.weatherForecastForCityName(getBotUserId(), city));
-                benderBotUserRepository.findAll();
+                sendMess(benderBotWeatherMessageGenerator.weatherForecastForCityName(getBotUserId(), city));
                 //if (getBotUserId() != benderBotUserRepository.)
                 
             } catch (HttpClientErrorException e) {
-                sendMess(benderBotWeatherMessage.cityNotFound(getBotUserId()));
+                sendMess(benderBotWeatherMessageGenerator.cityNotFound(getBotUserId()));
                 Logger.getLogger(BenderBot.class.getName()).log(Level.INFO, e.toString());
             } catch (JsonProcessingException e) {
                 Logger.getLogger(BenderBot.class.getName()).log(Level.WARNING, e.toString());

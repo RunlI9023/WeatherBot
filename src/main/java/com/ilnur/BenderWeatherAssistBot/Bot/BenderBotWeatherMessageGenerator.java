@@ -91,7 +91,8 @@ public class BenderBotWeatherMessageGenerator {
     private final String dayOfWeekForCompareTodayAndNotToday = dateToday.format(formatForDayOfWeek);
     
     private String weatherTextForMessageCity = "";
-    private String bufferTextForMessageCity;
+    private String bufferTextForHoursMessageCity;
+    private String bufferTextForDaysMessageCity;
     private final String dateForCurrentWeatherTextCity = dateToday.format(formatForFullDate);
     private final String hoursForCurrentWeatherTextCity = timeToday.format(formatForHoursShort);
     private String currentWeatherTextCity;
@@ -256,19 +257,17 @@ public class BenderBotWeatherMessageGenerator {
                                 break;}
                             case "небольшой дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRain();
                                 break;}
-                            case "дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRain();
+                            case "дождь" -> {currentWeatherEmoji = weatherEmoji.getUmbrella();
                                 break;}
                             case "снег" -> {currentWeatherEmoji = weatherEmoji.getSnowflake();
                                 break;}
         }
         System.out.println(weatherForecastForCityNameMain.getCity().getSunrise() + " : " + weatherForecastForCityNameMain.getCity().getSunset());
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
-        weatherTextForMessageCity += currentWeatherTextCity;
-        for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
-            
-            
+        //weatherTextForMessageCity += currentWeatherTextCity;
+        for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {     
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
-            bufferTextForMessageCity = String.format(tgSendMessageFormatForHours,
+            bufferTextForHoursMessageCity = String.format(tgSendMessageFormatForHours,
                 getResultForecastObjectsForCityName().get(i).getHours(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmoji(),
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMaximum()),
@@ -277,13 +276,13 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
-                    weatherTextForMessageCity += bufferTextForMessageCity;
+                    weatherTextForMessageCity += bufferTextForHoursMessageCity;
             }
 /*
 *часть для дней недели
 */            
             else {
-            bufferTextForMessageCity = String.format(tgSendMessageFormatForDays,    
+            bufferTextForDaysMessageCity = String.format(tgSendMessageFormatForDays,    
                 getResultForecastObjectsForCityName().get(i).getDayOfWeek(),
                 getResultForecastObjectsForCityName().get(i).getDate(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfDay(),
@@ -296,13 +295,13 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
-                weatherTextForMessageCity += bufferTextForMessageCity;
+                    weatherTextForMessageCity += bufferTextForDaysMessageCity;
             } 
         }
 
         SendMessage weatherForecastForCityNameMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text(weatherTextForMessageCity)
+                .text(currentWeatherTextCity + weatherTextForMessageCity)
                 .build();
         return weatherForecastForCityNameMessage;
     }
