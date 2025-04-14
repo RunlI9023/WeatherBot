@@ -24,30 +24,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-
-/** Exceptions for handling:
- * java.lang.RuntimeException: Error executing org.telegram.telegrambots.meta.api.methods.send.SendMessage query: 
- * [400] Bad Request: message is too long
- * org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: 
- * Error executing org.telegram.telegrambots.meta.api.methods.send.SendMessage query: 
- * [400] Bad Request: message is too long
- * 
- * добавить обработку эмодзи, если в прогнозе меньше 24 ч., иначе выводит null, сделать надпись н/д
- * 
- * Погода сейчас: сделать так, чтобы днем солнце, а ночью луна, если описание "ясная погода", использовать текущее время
- * 
- * !!!!!! добавить в список эмодзи: дождь 
- * 
- * выравнивание сообщения сделать, эмодзи описания погоды сегодян с 10 символа, дней недели с 15 символа начинать
- * далее один tab (4 пробела)
- * 
- * возврат из httpie "2025-04-05 09:00:00";
- * 
- * DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
- * LocalTime time = LocalTime.parse("23:59:59", dtf);
- * 23:59:59
- */
-
 @Component
 public class MessageGenerator {
     
