@@ -1,6 +1,7 @@
 
 package com.ilnur.WeatherBot.Bot;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +12,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 
 @Component
 @Entity
+@Table(name = "weather_bot_users")
 public class BotUser extends User {
     
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @Column(name = "ID")
     private Long id;
+    @Column(name = "bot_user_ID")
     private Long botUserId;
+    @Column(name = "bot_user_name")
     private String botUserName;
     @ElementCollection
+    @Column(name = "bot_user_city")
     private List<String> botFindCityList = new ArrayList<>();
 
     public BotUser() {

@@ -1,6 +1,1 @@
--- CREATE TABLE weather_bot_users (
---   brand VARCHAR(255),
---   model VARCHAR(255),
---   year INT
--- );
--- INSERT INTO weather_bot_users (username, password, role, phonenumber) VALUES ('ilnur', 'ilnur', 'ADMIN', '89172970513');
+-- INSERT INTO weather_bot_users (bot_user_id, id, bot_user_name) VALUES (1419881124,1,'Ильнур');
