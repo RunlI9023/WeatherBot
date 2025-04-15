@@ -9,33 +9,36 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
 @Component
 @Entity
-@Table(name = "weather_bot_users")
+@Table(name = "bot_users")
 public class BotUser extends User {
     
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
-    @Column(name = "bot_user_ID")
+    @Column(name = "tg_id")
     private Long botUserId;
-    @Column(name = "bot_user_name")
+    @Column(name = "user_name")
     private String botUserName;
-    @ElementCollection
-    @Column(name = "bot_user_city")
-    private List<String> botFindCityList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn//(name="users_city_id_city")
+    private List<BotUserFindCity> botFindCityList = new ArrayList<>();
 
     public BotUser() {
     }
 
-    public BotUser(long id, String botUserName, Long botUserId, String botFindCity, List<String> botFindCityList) {
+    public BotUser(long id, String botUserName, Long botUserId, String botFindCity, List<BotUserFindCity> botFindCityList) {
         this.id = id;
         this.botUserName = botUserName;
         this.botUserId = botUserId;
@@ -47,8 +50,6 @@ public class BotUser extends User {
         this.botUserId = botUserId;
     }
     
-    
-
     public long getID() {
         return id;
     }
@@ -73,11 +74,11 @@ public class BotUser extends User {
         this.botUserId = botUserId;
     }
 
-    public List<String> getBotFindCityList() {
+    public List<BotUserFindCity> getBotFindCityList() {
         return botFindCityList;
     }
 
-    public void setBotFindCityList(List<String> botFindCityList) {
+    public void setBotFindCityList(List<BotUserFindCity> botFindCityList) {
         this.botFindCityList = botFindCityList;
     }
 }

@@ -1,6 +1,7 @@
 package com.ilnur.WeatherBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ilnur.WeatherBot.BotRepository.BotUserFindCityRepository;
 import com.ilnur.WeatherBot.BotRest.BotRestClient;
 import java.text.ParseException;
 import java.util.logging.Level;
@@ -26,27 +27,30 @@ public class WeatherBot extends TelegramLongPollingBot {
     @Value("${botAdminId}")
     private Long botAdminId;
     private BotUser botUser;
+    private BotUserFindCity botUserFindCity;
     private final BotRestClient restClient;
     private final MessageGenerator messageGenerator;
     private final BotUserRepository userRepository;
+    private final BotUserFindCityRepository userFindCityRepository;
     private static final Logger logger = Logger.getLogger(WeatherBot.class.getName());
     
     @Autowired
-    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUser botUser) {
+    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUserFindCityRepository userFindCityRepository, BotUser botUser) {
         this.restClient = restClient;
         this.messageGenerator = messageGenerator;
         this.userRepository = userRepository;
+        this.userFindCityRepository = userFindCityRepository;
         this.botUser = botUser;
     }
     
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && !update.getMessage().hasLocation() && update.getMessage().getText().equals("/start")) {
-            botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
             if (userRepository.existsByBotUserId(botUser.getBotUserId())) {
                 logger.log(Level.INFO, "User already exist '{}'", botUserName);
             }
             else {
+                botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
                 userRepository.save(botUser);
                 logger.log(Level.INFO, "Add new user, '{}'", botUserName);
                 sendMess(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
@@ -71,18 +75,29 @@ public class WeatherBot extends TelegramLongPollingBot {
             String city = update.getMessage().getText();
             try {
                 sendMess(messageGenerator.weatherForecastForCityName(botUser.getBotUserId(), city));
+                if(!userFindCityRepository.existsByCityName(city)) {
+                    botUserFindCity = new BotUserFindCity();
+                    botUserFindCity.setCityName(city);
+                    botUserFindCity.setCityFindCount(1);
+                    botUser.getBotFindCityList().add(botUserFindCity);
+                    userFindCityRepository.save(botUserFindCity);
+                    userRepository.save(botUser);
+                    logger.log(Level.INFO, "Новый город добавлен");
+                }
+                else {
+                    for (BotUserFindCity user : userFindCityRepository.findAll()) {
+                        if (user.getCityName().equals(city))
+                            user.setCityFindCount(5);
+                        userFindCityRepository.save(botUserFindCity);
+                        }
                 
-//                for (BotUser user: userRepository.findAll()) {
-//                    if (user.getBotUserId().equals(botUser.getBotUserId())) {
-//                        user.getBotFindCityList().add(city);
-//                        user.getBotFindCityList().stream().forEach(x -> System.out.println(x));
-//                    }
-//                }
+                logger.log(Level.INFO, "Счет существующего города обновлен");
+                }
             } catch (HttpClientErrorException e) {
                 sendMess(messageGenerator.cityNotFound(botUser.getBotUserId()));
-                logger.log(Level.INFO, "JSON '{}'", e);
+                logger.log(Level.WARNING, "Такого города нет, HttpClientErrorException");
             } catch (JsonProcessingException e) {
-                logger.log(Level.INFO, "HttpClientErrorException '{}'", e);
+                logger.log(Level.INFO, "JSON '{}'", e);
             } catch (ParseException e) {
                 logger.log(Level.INFO, "ParseException '{}'", e);
             }

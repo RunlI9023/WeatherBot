@@ -185,7 +185,7 @@ public class MessageGenerator {
         String bufferTextForHoursMessageCity;
         String bufferTextForDaysMessageCity;
         //geoLocationReplyKeyboard.getKeyboard().add(new KeyboardRow().add(e));
-        System.out.println(forecastForCityName.getCity().getSunrise() + " : " + forecastForCityName.getCity().getSunset());
+        //System.out.println(forecastForCityName.getCity().getSunrise() + " : " + forecastForCityName.getCity().getSunset());
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
         String weatherTextForMessageCity = "";
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
