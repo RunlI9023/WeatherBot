@@ -63,9 +63,6 @@ public class MessageGenerator {
     private final String dayOfWeekForCompareTodayAndNotToday = dateToday.format(formatForDayOfWeek);
     
     private String cityNameForDB;
-    private String weatherTextForMessageCity = "";
-    private String bufferTextForHoursMessageCity;
-    private String bufferTextForDaysMessageCity;
     private final String dateForCurrentWeatherTextCity = dateToday.format(formatForFullDate);
     private final String hoursForCurrentWeatherTextCity = timeToday.format(formatForHoursShort);
     private String currentWeatherTextCity;
@@ -185,11 +182,14 @@ public class MessageGenerator {
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
         forecastForCityName = restClient.getWeatherForecastForCityName(city);
         cityNameForDB = forecastForCityName.getCity().toString();
+        String bufferTextForHoursMessageCity;
+        String bufferTextForDaysMessageCity;
         //geoLocationReplyKeyboard.getKeyboard().add(new KeyboardRow().add(e));
         System.out.println(forecastForCityName.getCity().getSunrise() + " : " + forecastForCityName.getCity().getSunset());
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
-        //weatherTextForMessageCity += currentWeatherTextCity;
-        for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {     
+        String weatherTextForMessageCity = "";
+        for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
+            
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
             bufferTextForHoursMessageCity = String.format(tgSendMessageFormatForHours,
                 getResultForecastObjectsForCityName().get(i).getHours(),
@@ -239,6 +239,7 @@ public class MessageGenerator {
     
     public List<ResultForecastObjectForTGMessageCity> getResultForecastObjectsForCityName() throws ParseException {
         List<ResultForecastObjectForTGMessageCity> resultForecastMessageCity = new ArrayList<>();
+        List<ResultForecastObjectForTGMessageCity> resultForecastMessageCityForHours = new ArrayList<>();
         for (Map.Entry<String, List<ForecastObjectForGrouping>> entry : forecastForCityName.resultForecastMessage().entrySet()) {
             ResultForecastObjectForTGMessageCity resultForecastMessageForDayCity = new ResultForecastObjectForTGMessageCity();
             dateForForecastObjectCityName = LocalDate.parse(entry.getKey(), formatForDate);
@@ -273,7 +274,7 @@ public class MessageGenerator {
                                 break;
                             }
                         }
-                    resultForecastMessageCity.add(resultForecastMessageForHoursCity);
+                    resultForecastMessageCityForHours.add(resultForecastMessageForHoursCity);
                 }
             }
             else {
@@ -354,8 +355,10 @@ public class MessageGenerator {
                 }
             }
             resultForecastMessageCity.add(resultForecastMessageForDayCity);
+            
             }
         }
+        resultForecastMessageCity.addAll(0, resultForecastMessageCityForHours);
         return resultForecastMessageCity;
     }
     

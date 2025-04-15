@@ -44,11 +44,11 @@ public class WeatherBot extends TelegramLongPollingBot {
         if (update.hasMessage() && !update.getMessage().hasLocation() && update.getMessage().getText().equals("/start")) {
             botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
             if (userRepository.existsByBotUserId(botUser.getBotUserId())) {
-                logger.log(Level.INFO, "User already exist {0}", botUserName);
+                logger.log(Level.INFO, "User already exist '{}'", botUserName);
             }
             else {
                 userRepository.save(botUser);
-                logger.log(Level.INFO, "Add new user {0}", botUserName);
+                logger.log(Level.INFO, "Add new user, '{}'", botUserName);
                 sendMess(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
             }
             sendMess(messageGenerator.greetingUser(botUser.getBotUserId(), botUser.getBotUserName()));
@@ -60,17 +60,18 @@ public class WeatherBot extends TelegramLongPollingBot {
                 try {
                     sendMess(messageGenerator.weatherForecastForGeoposition(botUser.getBotUserId()));
                 } catch (JsonProcessingException e) {
-                    logger.log(Level.INFO, "JSON {0}", e);
+                    logger.log(Level.INFO, "JSON", e.toString());
                 } catch (HttpClientErrorException e) {
-                    logger.log(Level.INFO, "HttpClientErrorException {0}", e);
+                    logger.log(Level.INFO, "HttpClientErrorException", e.toString());
                 } catch (ParseException e) {
-                    logger.log(Level.INFO, "ParseException {0}", e);
+                    logger.log(Level.INFO, "ParseException", e.toString());
                 }
             }
         else if (!"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
             String city = update.getMessage().getText();
             try {
                 sendMess(messageGenerator.weatherForecastForCityName(botUser.getBotUserId(), city));
+                
 //                for (BotUser user: userRepository.findAll()) {
 //                    if (user.getBotUserId().equals(botUser.getBotUserId())) {
 //                        user.getBotFindCityList().add(city);
@@ -79,11 +80,11 @@ public class WeatherBot extends TelegramLongPollingBot {
 //                }
             } catch (HttpClientErrorException e) {
                 sendMess(messageGenerator.cityNotFound(botUser.getBotUserId()));
-                logger.log(Level.INFO, "JSON {0}", e);
+                logger.log(Level.INFO, "JSON '{}'", e);
             } catch (JsonProcessingException e) {
-                logger.log(Level.INFO, "HttpClientErrorException {0}", e);
+                logger.log(Level.INFO, "HttpClientErrorException '{}'", e);
             } catch (ParseException e) {
-                logger.log(Level.INFO, "ParseException {0}", e);
+                logger.log(Level.INFO, "ParseException '{}'", e);
             }
         }
     }

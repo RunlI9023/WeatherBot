@@ -134,11 +134,4 @@ public class WeatherEmoji {
     public String getSmallRedTriangleDown() {
         return smallRedTriangleDown;
     }
-
-    
-    
-    
-    
-    
-
 }
