@@ -1,7 +1,7 @@
 package com.ilnur.WeatherBot.BotRest;
 
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastForCityName;
-import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastFoGeoposition;
+import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastForGeoposition;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,19 +42,22 @@ public class BotRestClient {
         .retrieve()
         .body(ForecastForCityName.class);
         Thread currentThread = Thread.currentThread();
-        logger.log(Level.INFO, "Пошел запрос", currentThread.getName());
-        System.out.println(currentThread.getName() + ", " + currentThread.getPriority());
+        logger.log(Level.INFO, "Поток для запроса по названию: {0}",currentThread.getName());
         return CompletableFuture.completedFuture(forecastForCityName);
     }
     
-    public ForecastFoGeoposition getWeatherForecastForGeoposition(String lat, String lon) {
-        return restClient
+    @Async
+    public CompletableFuture<ForecastForGeoposition> getWeatherForecastForGeoposition(String lat, String lon) {
+        ForecastForGeoposition forecastForGeoposition = restClient
         .get()
         .uri("https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
                 lat, lon, getWeatherApiToken())
         .accept(APPLICATION_JSON)
         .retrieve()
-        .body(ForecastFoGeoposition.class);
+        .body(ForecastForGeoposition.class);
+        Thread currentThread = Thread.currentThread();
+        logger.log(Level.INFO, "Поток для запроса по геопозиции: {0}",currentThread.getName());
+        return CompletableFuture.completedFuture(forecastForGeoposition);
     }
     
     public String getWeatherApiToken() {

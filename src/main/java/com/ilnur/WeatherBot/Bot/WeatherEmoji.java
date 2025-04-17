@@ -1,21 +1,16 @@
 package com.ilnur.WeatherBot.Bot;
 
-import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiParser;
-import com.vdurmont.emoji.EmojiManager;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WeatherEmoji {
 
-    private String humidity = EmojiParser.parseToUnicode(":droplet:");//капля влажность
-    private String thermometer = EmojiParser.parseToUnicode(":thermometer:");//термометр
-    private String windBlowingFace = EmojiParser.parseToUnicode(":wind_blowing_face:");//лицо с ветром
-    private String cloud = EmojiParser.parseToUnicode(":cloud:");//облако
-    private String fog = EmojiParser.parseToUnicode(":fog:");//tuman
+    private String humidity = EmojiParser.parseToUnicode(":droplet:");
+    private String thermometer = EmojiParser.parseToUnicode(":thermometer:");
+    private String windBlowingFace = EmojiParser.parseToUnicode(":wind_blowing_face:");
+    private String cloud = EmojiParser.parseToUnicode(":cloud:");
+    private String fog = EmojiParser.parseToUnicode(":fog:");
     private String thunderCloudRain = EmojiParser.parseToUnicode(":thunder_cloud_rain:");
     private String whiteSunSmallCloud = EmojiParser.parseToUnicode(":white_sun_small_cloud:");
     private String whiteSunBehindCloud = EmojiParser.parseToUnicode(":white_sun_behind_cloud:");

@@ -2,7 +2,7 @@ package com.ilnur.WeatherBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ilnur.WeatherBot.BotRest.BotRestClient;
-import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastFoGeoposition;
+import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastForGeoposition;
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastForCityName;
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastObjectForGrouping;
 import com.ilnur.WeatherBot.ForecastForCityName.ResultForecastObjectForTGMessageCity;
@@ -29,7 +29,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 public class MessageGenerator {
     
     private ForecastForCityName forecastForCityName;
-    private ForecastFoGeoposition forecastFoGeoposition;
+    private ForecastForGeoposition forecastFoGeoposition;
     private BotRestClient restClient;
     private WeatherEmoji weatherEmoji;
     private ReplyKeyboardMarkup geoLocationReplyKeyboard;
@@ -124,10 +124,12 @@ public class MessageGenerator {
         return cityNotFoundMessage;
     }
     
-    public SendMessage weatherForecastForGeoposition(Long who) throws JsonProcessingException, ParseException {
+    public SendMessage weatherForecastForGeoposition(Long who) throws JsonProcessingException, ParseException, InterruptedException, ExecutionException {
         forecastFoGeoposition = restClient.getWeatherForecastForGeoposition(
                      restClient.getGeoLatitude().toString(), 
-                     restClient.getGeoLongitude().toString());
+                     restClient.getGeoLongitude().toString()).get();
+        restClient.getWeatherForecastForGeoposition(restClient.getGeoLatitude().toString(), 
+                     restClient.getGeoLongitude().toString()).complete(forecastFoGeoposition);
         
         String weatherEmojiForGeoposition = "";
         String textOutForGeoposition = "";
@@ -141,10 +143,7 @@ public class MessageGenerator {
         String textInTabFour = "";
         int textInTabFourLength = textInTabFour.length();
         for (int i = 0; i < getResultForecastObjectsForGeoposition().size(); i++) {     
-            if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
-/*
-*часть для сегодня по часам
-*/                  
+            if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){                
             textInForGeoposition = "\n" +    
                 getResultForecastObjectsForGeoposition().get(i).getHours() + ":" + textInTabOne +
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji() + textInTabTwo +
@@ -152,10 +151,7 @@ public class MessageGenerator {
                 weatherEmoji.getHumidity() + textInTabFour + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
                 ;
                 textOutForGeoposition += textInForGeoposition;
-            }
-/*
-*часть для дней недели
-*/            
+            }     
             else {
             textInForGeoposition = "\n" +    
                 getResultForecastObjectsForGeoposition().get(i).getDayOfWeek() + ", " + 
@@ -164,11 +160,7 @@ public class MessageGenerator {
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight() + "  " +
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + "  " + 
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()) + "\u2103" + "  " +
-                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
-//                + " " +
-//                getResultForecastObjects().get(i).getDescriptionOfDay() + ", " + 
-//                getResultForecastObjects().get(i).getDescriptionOfNight()
-                ;
+                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%";
                 textOutForGeoposition += textInForGeoposition;
             } 
         }
@@ -202,10 +194,7 @@ public class MessageGenerator {
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
                     weatherTextForMessageCity += bufferTextForHoursMessageCity;
-            }
-/*
-*часть для дней недели
-*/            
+            }       
             else {
             bufferTextForDaysMessageCity = String.format(tgSendMessageFormatForDays,    
                 getResultForecastObjectsForCityName().get(i).getDayOfWeek(),
@@ -230,13 +219,6 @@ public class MessageGenerator {
                 .build();
         return weatherForecastForCityNameMessage;
     }
-    
-    /*
-    *
-    *ОБРАБОТКА ОБЪЕКТОВ С ПОИСКОМ ПО НАЗВАНИЮ
-    ********************************************************************************
-    *
-    */
     
     public List<ResultForecastObjectForTGMessageCity> getResultForecastObjectsForCityName() throws ParseException {
         List<ResultForecastObjectForTGMessageCity> resultForecastMessageCity = new ArrayList<>();
@@ -362,13 +344,6 @@ public class MessageGenerator {
         resultForecastMessageCity.addAll(0, resultForecastMessageCityForHours);
         return resultForecastMessageCity;
     }
-    
-    /*
-    *
-    *ОБРАБОТКА ОБЪЕКТОВ С ПОИСКОМ ПО ГЕОПОЗИЦИИ
-    ********************************************************************************
-    *
-    */
     
     public List<ResultForecastObjectForTGMessageGeoposition> getResultForecastObjectsForGeoposition() throws ParseException {
         List<ResultForecastObjectForTGMessageGeoposition> resultForecastMessageGeo = new ArrayList<>();

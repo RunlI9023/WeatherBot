@@ -1,6 +1,5 @@
 package com.ilnur.WeatherBot.Bot;
 
-import com.vdurmont.emoji.EmojiManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
