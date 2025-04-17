@@ -21,6 +21,7 @@ public class BotUserFindCity {
     @Column(name = "id_city")
     private Long id;
     @Column(name = "user_city")
+    //@ManyToOne
     private String cityName;
     @Column(name = "city_count")
     private int cityFindCount;

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -179,8 +180,9 @@ public class MessageGenerator {
         return weatherForecastForGeopositionMessage;
     }
     
-    public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
-        forecastForCityName = restClient.getWeatherForecastForCityName(city);
+    public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException, InterruptedException, ExecutionException {
+        forecastForCityName = restClient.getWeatherForecastForCityName(city).get();
+        restClient.getWeatherForecastForCityName(city).complete(forecastForCityName);
         cityNameForDB = forecastForCityName.getCity().toString();
         String bufferTextForHoursMessageCity;
         String bufferTextForDaysMessageCity;
@@ -189,7 +191,6 @@ public class MessageGenerator {
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
         String weatherTextForMessageCity = "";
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
-            
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
             bufferTextForHoursMessageCity = String.format(tgSendMessageFormatForHours,
                 getResultForecastObjectsForCityName().get(i).getHours(),

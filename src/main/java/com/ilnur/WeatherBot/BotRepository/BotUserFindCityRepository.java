@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BotUserFindCityRepository extends CrudRepository<BotUserFindCity, Long> {
     Boolean existsByCityName(String city);
+   
 //    List<BotUserFindCity> findByBotUserId(Long id);
 //    BotUserFindCity findByCityName(String city);
 }
