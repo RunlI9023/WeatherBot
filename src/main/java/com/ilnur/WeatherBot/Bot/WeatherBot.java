@@ -91,7 +91,7 @@ public class WeatherBot extends TelegramLongPollingBot {
             String city = update.getMessage().getText();
             botUser.setBotUserId(update.getMessage().getFrom().getId());
             botUser.setBotUserName(update.getMessage().getFrom().getFirstName());
-            if (userRepository.existsByBotUserId(this.botUser.getBotUserId())) {
+            if (userRepository.existsByBotUserId(botUser.getBotUserId())) {
                 logger.log(Level.INFO, "Существующий пользователь продолжил сессию");}
             else {
                 botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
@@ -110,11 +110,13 @@ public class WeatherBot extends TelegramLongPollingBot {
                 }
                 else {
                     for (BotUserFindCity c : userFindCityRepository.findAll()) {
-                        if (c.getId().equals(userRepository.findByBotUserId(update.getMessage().getFrom().getId()).getID()))
-                            c.setCityFindCount(c.getCityFindCount() + 1);
+                        if (c.getCityName().equals(update.getMessage().getText())) {
+                            c.cityFindCountIncrement(1);
+                            userFindCityRepository.save(c);
+                            logger.log(Level.INFO, "Счет обновлен: {0}", c.getCityFindCount());
                         }
-                    userFindCityRepository.save(botUserFindCity);
-                    logger.log(Level.INFO, "Счет обновлен: {0}", botUserFindCity.getCityFindCount());
+                    }
+                    
                 }
             } catch (HttpClientErrorException e) {
                 sendMess(messageGenerator.cityNotFound(botUser.getBotUserId()));
