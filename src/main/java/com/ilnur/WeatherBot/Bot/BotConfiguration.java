@@ -23,6 +23,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @EnableAsync
 public class BotConfiguration implements AsyncConfigurer {
     
+    
+    
     @Bean
     @Override
     public Executor getAsyncExecutor() {
@@ -42,21 +44,21 @@ public class BotConfiguration implements AsyncConfigurer {
             return api;
         }
     
-    @Bean
-    public ReplyKeyboardMarkup geoLocationReplyKeyboard() {
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        KeyboardButton geoCurrentWeatherButton = new KeyboardButton();
-        geoCurrentWeatherButton.setRequestLocation(true);
-        geoCurrentWeatherButton.setText("Получить погоду по геолокации");
-        row.add(geoCurrentWeatherButton);
-        keyboard.add(row);
-        keyboardMarkup.setKeyboard(keyboard);
-        keyboardMarkup.setSelective(true);
-        keyboardMarkup.setResizeKeyboard(true);
-            return keyboardMarkup;
-        }
+//    @Bean
+//    public ReplyKeyboardMarkup geoLocationReplyKeyboard() {
+//        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+//        List<KeyboardRow> keyboard = new ArrayList<>();
+//        KeyboardRow row = new KeyboardRow();
+//        KeyboardButton geoCurrentWeatherButton = new KeyboardButton();
+//        geoCurrentWeatherButton.setRequestLocation(true);
+//        geoCurrentWeatherButton.setText("Получить погоду по геолокации");
+//        row.add(geoCurrentWeatherButton);
+//        keyboard.add(row);
+//        keyboardMarkup.setKeyboard(keyboard);
+//        keyboardMarkup.setSelective(true);
+//        keyboardMarkup.setResizeKeyboard(true);
+//            return keyboardMarkup;
+//        }
     
     @Bean
     public InlineKeyboardMarkup geoLocationInlineKeyboard() {

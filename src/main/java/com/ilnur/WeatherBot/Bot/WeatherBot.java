@@ -32,15 +32,19 @@ public class WeatherBot extends TelegramLongPollingBot {
     private final MessageGenerator messageGenerator;
     private final BotUserRepository userRepository;
     private final BotUserFindCityRepository userFindCityRepository;
+    private final KeyBoard keyboard;
+    private SendMessage geoMessage;
     private static final Logger logger = Logger.getLogger(WeatherBot.class.getName());
+    private final String startMessage = "Для того, чтобы узнать погоду, введи название нужного города или нажми на кнопку в меню для получения погоды по текущей геолокации";
     
     @Autowired
-    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUserFindCityRepository userFindCityRepository, BotUser botUser) {
+    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUserFindCityRepository userFindCityRepository, BotUser botUser, KeyBoard keyboard) {
         this.restClient = restClient;
         this.messageGenerator = messageGenerator;
         this.userRepository = userRepository;
         this.userFindCityRepository = userFindCityRepository;
         this.botUser = botUser;
+        this.keyboard = keyboard;
     }
     
     @Override
@@ -55,10 +59,14 @@ public class WeatherBot extends TelegramLongPollingBot {
                 botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
                 userRepository.save(botUser);
                 logger.log(Level.INFO, "Новый пользователь нажал START");
-                sendMess(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
+                messageSender(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
             }
-            sendMess(messageGenerator.greetingUser(botUser.getBotUserId(), botUser.getBotUserName()));
-            sendMess(messageGenerator.requestGeoPosition(botUser.getBotUserId()));
+            geoMessage = new SendMessage();
+            geoMessage.setReplyMarkup(keyboard.geoLocationReplyKeyboard(userFindCityRepository));
+            geoMessage.setText("Для того, чтобы узнать погоду, введи название нужного города или нажми на кнопку в меню для получения погоды по текущей геолокации");
+            geoMessage.setChatId(botUser.getBotUserId());
+            messageSender(messageGenerator.greetingUser(botUser.getBotUserId(), botUser.getBotUserName()));
+            messageSender(geoMessage);
         }
         else if(update.getMessage().hasLocation()) {
             restClient.setGeoLatitude(update.getMessage().getLocation().getLatitude());
@@ -71,10 +79,10 @@ public class WeatherBot extends TelegramLongPollingBot {
                 botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
                 userRepository.save(botUser);
                 logger.log(Level.INFO, "Новый пользователь направил геопозицию без START");
-                sendMess(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
+                messageSender(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
             }
             try {
-                sendMess(messageGenerator.weatherForecastForGeoposition(botUser.getBotUserId()));
+                messageSender(messageGenerator.weatherForecastForGeoposition(botUser.getBotUserId()));
             } catch (JsonProcessingException e) {
                 logger.log(Level.INFO, "JSON {0}", e.toString());
             } catch (HttpClientErrorException e) {
@@ -87,20 +95,28 @@ public class WeatherBot extends TelegramLongPollingBot {
                 logger.log(Level.INFO, "ExecutionException {0}", ex.toString());
             }
         }
-        else if (!"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
+        else if (update.hasMessage() && !"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
             String city = update.getMessage().getText();
             botUser.setBotUserId(update.getMessage().getFrom().getId());
             botUser.setBotUserName(update.getMessage().getFrom().getFirstName());
+            geoMessage = new SendMessage();
+            geoMessage.setReplyMarkup(keyboard.geoLocationReplyKeyboard(userFindCityRepository));
+            geoMessage.setText("Секундочку...");
+            geoMessage.setChatId(botUser.getBotUserId());    
             if (userRepository.existsByBotUserId(botUser.getBotUserId())) {
                 logger.log(Level.INFO, "Существующий пользователь продолжил сессию");}
             else {
                 botUser = new BotUser(update.getMessage().getFrom().getFirstName(), update.getMessage().getFrom().getId());
                 userRepository.save(botUser);
                 logger.log(Level.INFO, "Новый пользователь ввел название города без START");
-                sendMess(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
+                messageSender(messageGenerator.forAdmin(botAdminId, botUser.getBotUserName(), botUser.getBotUserId()));
             }
             try {
-                sendMess(messageGenerator.weatherForecastForCityName(botUser.getBotUserId(), city));
+                messageSender(geoMessage);
+                messageSender(messageGenerator.weatherForecastForCityName(botUser.getBotUserId(), city));
+                /*
+                присваиваем не сам запрос, а имя города, которое пришло из API
+                */
                 if(!userFindCityRepository.existsByCityName(city)) {
                     botUserFindCity = new BotUserFindCity();
                     botUserFindCity.setCityName(city);
@@ -116,10 +132,9 @@ public class WeatherBot extends TelegramLongPollingBot {
                             logger.log(Level.INFO, "Счет обновлен: {0}", c.getCityFindCount());
                         }
                     }
-                    
                 }
             } catch (HttpClientErrorException e) {
-                sendMess(messageGenerator.cityNotFound(botUser.getBotUserId()));
+                messageSender(messageGenerator.cityNotFound(botUser.getBotUserId()));
                 logger.log(Level.WARNING, "Такого города нет, {0}", e.toString());
             } catch (JsonProcessingException e) {
                 logger.log(Level.INFO, "JSON {0}", e.toString());
@@ -129,11 +144,13 @@ public class WeatherBot extends TelegramLongPollingBot {
                 logger.log(Level.INFO, "InterruptedException {0}", ex.toString());
             } catch (ExecutionException ex) {
                 logger.log(Level.INFO, "ExecutionException {0}", ex.toString());
+                messageSender(messageGenerator.cityNotFound(botUser.getBotUserId()));
             }
         }
+        //else if (update.getMessage().equals(messageGenerator.weatherForecastForCityName(botUser.getBotUserId(), city))) {}
     }
     
-    public void sendMess(SendMessage message) {
+    public void messageSender(SendMessage message) {
         try {
             execute(message);
             Thread currentThread = Thread.currentThread();

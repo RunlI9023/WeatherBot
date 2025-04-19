@@ -32,7 +32,7 @@ public class MessageGenerator {
     private ForecastForGeoposition forecastFoGeoposition;
     private BotRestClient restClient;
     private WeatherEmoji weatherEmoji;
-    private ReplyKeyboardMarkup geoLocationReplyKeyboard;
+    //private ReplyKeyboardMarkup geoLocationReplyKeyboard;
     
     private final Double pressureConst = 0.750062;
     
@@ -83,10 +83,10 @@ public class MessageGenerator {
     }
 
     @Autowired
-    public MessageGenerator(BotRestClient restClient, WeatherEmoji weatherEmoji, ReplyKeyboardMarkup geoLocationReplyKeyboard) {
+    public MessageGenerator(BotRestClient restClient, WeatherEmoji weatherEmoji/*, ReplyKeyboardMarkup geoLocationReplyKeyboard*/) {
         this.restClient = restClient;
         this.weatherEmoji = weatherEmoji;
-        this.geoLocationReplyKeyboard = geoLocationReplyKeyboard;
+        //this.geoLocationReplyKeyboard = geoLocationReplyKeyboard;
     }
     
     public SendMessage greetingUser(Long who, String userName) {
@@ -105,16 +105,16 @@ public class MessageGenerator {
         return forAdmin;
     }
 
-    public SendMessage requestGeoPosition(Long who) {
-        SendMessage requestGeoPositionMessage = SendMessage.builder()
-                .chatId(who.toString())
-                .replyMarkup(geoLocationReplyKeyboard)
-                .text("Для того, чтобы узнать погоду, "
-                        + "введи название нужного города или нажми на кнопку "
-                        + "в меню для получения погоды по текущей геолокации")
-                .build();
-        return requestGeoPositionMessage;
-    }
+//    public SendMessage requestGeoPosition(Long who) {
+//        SendMessage requestGeoPositionMessage = SendMessage.builder()
+//                .chatId(who.toString())
+//                .replyMarkup(geoLocationReplyKeyboard)
+//                .text("Для того, чтобы узнать погоду, "
+//                        + "введи название нужного города или нажми на кнопку "
+//                        + "в меню для получения погоды по текущей геолокации")
+//                .build();
+//        return requestGeoPositionMessage;
+//    }
     
     public SendMessage cityNotFound(Long who) {
         SendMessage cityNotFoundMessage = SendMessage.builder()
