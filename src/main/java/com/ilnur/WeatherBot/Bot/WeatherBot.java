@@ -26,8 +26,8 @@ public class WeatherBot extends TelegramLongPollingBot {
     private String botUserName;
     @Value("${botAdminId}")
     private Long botAdminId;
-    private BotUser botUser;
     private BotUserFindCity botUserFindCity;
+    private BotUser botUser;
     private final BotRestClient restClient;
     private final MessageGenerator messageGenerator;
     private final BotUserRepository userRepository;
