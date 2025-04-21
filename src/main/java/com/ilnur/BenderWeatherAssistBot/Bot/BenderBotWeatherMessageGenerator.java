@@ -182,43 +182,39 @@ public class BenderBotWeatherMessageGenerator {
         }
         String textOutForGeoposition = "";
         String textInForGeoposition;
-        String textInTabOne = "";
-        int textInTabOneLength = textInTabOne.length();
-        String textInTabTwo = "";
-        int textInTabTwoLength = textInTabTwo.length();
-        String textInTabThree = "";
-        int textInTabThreeLength = textInTabThree.length();
-        String textInTabFour = "";
-        int textInTabFourLength = textInTabFour.length();
         for (int i = 0; i < getResultForecastObjectsForGeoposition().size(); i++) {     
             if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
 /*
 *часть для сегодня по часам
 */                  
-            textInForGeoposition = "\n" +    
-                getResultForecastObjectsForGeoposition().get(i).getHours() + ":" + textInTabOne +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji() + textInTabTwo +
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + textInTabThree + 
-                weatherEmoji.getHumidity() + textInTabFour + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
-                ;
+            textInForGeoposition = String.format(tgSendMessageFormatForHours,  
+                getResultForecastObjectsForGeoposition().get(i).getHours(),
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()),
+                "\u2103",
+                "\u2913\u2913",
+                getResultForecastObjectsForGeoposition().get(i).getPressure(),
+                weatherEmoji.getHumidity(),
+                getResultForecastObjectsForGeoposition().get(i).getHumidity());
                 textOutForGeoposition += textInForGeoposition;
             }
 /*
 *часть для дней недели
 */            
             else {
-            textInForGeoposition = "\n" +    
-                getResultForecastObjectsForGeoposition().get(i).getDayOfWeek() + ", " + 
-                getResultForecastObjectsForGeoposition().get(i).getDate() + ": " + "\n" +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfDay() + "  " +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight() + "  " +
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + "  " + 
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()) + "\u2103" + "  " +
-                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
-//                + " " +
-//                getResultForecastObjects().get(i).getDescriptionOfDay() + ", " + 
-//                getResultForecastObjects().get(i).getDescriptionOfNight()
-                ;
+            textInForGeoposition = String.format(tgSendMessageFormatForDays,    
+                getResultForecastObjectsForGeoposition().get(i).getDayOfWeek(),
+                getResultForecastObjectsForGeoposition().get(i).getDate(),
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfDay(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()),
+                "\u2103",
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()),
+                "\u2103",
+                "\u2913\u2913",
+                getResultForecastObjectsForGeoposition().get(i).getPressure(),
+                weatherEmoji.getHumidity(),
+                getResultForecastObjectsForGeoposition().get(i).getHumidity());
                 textOutForGeoposition += textInForGeoposition;
             } 
         }
@@ -455,6 +451,7 @@ public class BenderBotWeatherMessageGenerator {
                     resultForecastMessageForHoursGeo.setTempMaximum(entry.getValue().get(i).getTempMaximum());
                     resultForecastMessageForHoursGeo.setHumidity(entry.getValue().get(i).getHumidity());
                     resultForecastMessageForHoursGeo.setDescription(entry.getValue().get(i).getDescription());
+                    resultForecastMessageForHoursGeo.setPressure((int)((entry.getValue().get(i).getPressure()) * pressureConst));
                         switch(entry.getValue().get(i).getDescription()) {
                             case "переменная облачность" -> {resultForecastMessageForHoursGeo.setDescriptionEmoji(weatherEmoji.getCloud());
                                 break;}
@@ -494,12 +491,17 @@ public class BenderBotWeatherMessageGenerator {
                 .stream()
                 .map(r -> r.getHumidity())
                 .collect(Collectors.toList()));
+            Integer press = Collections.max(entry.getValue()
+                .stream()
+                .map(r -> r.getPressure())
+                .collect(Collectors.toList()));
             
             resultForecastMessageForDayGeo.setDate(fullDateForForecastObjectGeoposition);
             resultForecastMessageForDayGeo.setDayOfWeek(dayOfWeekForForecastObjectGeoposition);
             resultForecastMessageForDayGeo.setTempMaximum(maxTemperatureForGeoposition);
             resultForecastMessageForDayGeo.setTempMinimum(minTemperatureForGeoposition);
             resultForecastMessageForDayGeo.setHumidity(humidityForGeoposition);
+            resultForecastMessageForDayGeo.setPressure((int)(pressureConst *  press));
             for (int j = 0; j < entry.getValue().size(); j++) {
                 switch (entry.getValue().get(j).getDate().substring(11, 16)) {
                     case "12:00" -> {
