@@ -89,14 +89,11 @@ public class BenderBotWeatherMessageGenerator {
     private String fullDateForForecastObjectGeoposition;
     private final String dayOfWeekForCompareTodayAndNotToday = dateToday.format(formatForDayOfWeek);
     
-    private String weatherTextForMessageCity = "";
-    private String bufferTextForMessageCity;
     private final String dateForCurrentWeatherTextCity = dateToday.format(formatForFullDate);
+    
     private final String hoursForCurrentWeatherTextCity = timeToday.format(formatForHoursShort);
     private String currentWeatherTextCity;
     
-    private String weatherTextForMessageGeo = "";
-    private String bufferTextForMessageGeo;
     private final String dateForCurrentWeatherTextGeo = dateToday.format(formatForFullDate);
     private final String hoursForCurrentWeatherTextGeo = timeToday.format(formatForHoursShort);
     private String currentWeatherTextGeo;
@@ -104,6 +101,7 @@ public class BenderBotWeatherMessageGenerator {
     private final String tgSendMessageFormatForHours = "%s: %-3s%+3d%-3s%2s%-3s%-3s%d%%\n";
     private final String tgSendMessageFormatForDays = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%-3s%d%%\n";
     private final String tgSendMessageFormatForCurrentWeatherNow = "Почасовой прогноз на сегодня, \n%s:\n\n";
+    private final String tgSendMessageFormatForCurrentWeatherGeo = "Почасовой прогноз на сегодня, \n%s:\n\n";
     
 
     public BenderBotWeatherMessageGenerator() {
@@ -182,6 +180,8 @@ public class BenderBotWeatherMessageGenerator {
         }
         String textOutForGeoposition = "";
         String textInForGeoposition;
+        currentWeatherTextGeo = String.format(tgSendMessageFormatForCurrentWeatherGeo,dateForCurrentWeatherTextGeo);
+        textOutForGeoposition += currentWeatherTextGeo;
         for (int i = 0; i < getResultForecastObjectsForGeoposition().size(); i++) {     
             if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
 /*
@@ -221,12 +221,7 @@ public class BenderBotWeatherMessageGenerator {
         
         SendMessage weatherForecastForGeopositionMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text("Прогноз погоды для г. " + currentWeatherForGeoposition.getName() + ": " + 
-                "\nСейчас: " + weatherEmojiForGeoposition + "  " + Math.round(currentWeatherForGeoposition.getMain().getTempMax()) + " \u2103" +
-                ", ощущается как: " + Math.round(currentWeatherForGeoposition.getMain().getFeelsLike()) + " \u2103" + "  " +
-                        weatherEmoji.getHumidity() + "  " + currentWeatherForGeoposition.getMain().getHumidity() + "%"
-//                        + weatherNowCurrent.getDescription() 
-                        + textOutForGeoposition)
+                .text(textOutForGeoposition)
                 .build();
         return weatherForecastForGeopositionMessage;
     }
@@ -235,6 +230,8 @@ public class BenderBotWeatherMessageGenerator {
         weatherForecastForCityNameMain = benderBotRestClient.getWeatherForecastForCityName(city);
         currentWeatherForCityName = benderBotRestClient.getCurrentWeatherForCityName(city);
         String currentWeatherEmoji = "";
+        String weatherTextForMessageCity = "";
+        String bufferTextForMessageCity;
         switch(currentWeatherForCityName.getDescription()) {
                             case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloud();
                                 break;}
@@ -258,8 +255,6 @@ public class BenderBotWeatherMessageGenerator {
         currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
         weatherTextForMessageCity += currentWeatherTextCity;
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
-            
-            
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
             bufferTextForMessageCity = String.format(tgSendMessageFormatForHours,
                 getResultForecastObjectsForCityName().get(i).getHours(),
@@ -309,6 +304,7 @@ public class BenderBotWeatherMessageGenerator {
     
     public List<ResultForecastObjectForTGMessageCity> getResultForecastObjectsForCityName() throws ParseException {
         List<ResultForecastObjectForTGMessageCity> resultForecastMessageCity = new ArrayList<>();
+        List<ResultForecastObjectForTGMessageCity> resultForecastMessageCityForHours = new ArrayList<>();
         for (Map.Entry<String, List<ForecastObjectForGrouping>> entry : weatherForecastForCityNameMain.resultForecastMessage().entrySet()) {
             ResultForecastObjectForTGMessageCity resultForecastMessageForDayCity = new ResultForecastObjectForTGMessageCity();
             dateForForecastObjectCityName = LocalDate.parse(entry.getKey(), formatForDate);
@@ -343,7 +339,7 @@ public class BenderBotWeatherMessageGenerator {
                                 break;
                             }
                         }
-                    resultForecastMessageCity.add(resultForecastMessageForHoursCity);
+                    resultForecastMessageCityForHours.add(resultForecastMessageForHoursCity);
                 }
             }
             else {
@@ -423,9 +419,11 @@ public class BenderBotWeatherMessageGenerator {
                     }
                 }
             }
+            //resultForecastMessageCity.addAll(0, resultForecastMessageCityForHours);
             resultForecastMessageCity.add(resultForecastMessageForDayCity);
             }
         }
+        resultForecastMessageCity.addAll(0, resultForecastMessageCityForHours);
         return resultForecastMessageCity;
     }
     
@@ -438,7 +436,7 @@ public class BenderBotWeatherMessageGenerator {
     
     public List<ResultForecastObjectForTGMessageGeoposition> getResultForecastObjectsForGeoposition() throws ParseException {
         List<ResultForecastObjectForTGMessageGeoposition> resultForecastMessageGeo = new ArrayList<>();
-        
+        List<ResultForecastObjectForTGMessageGeoposition> resultForecastMessageGeoForHours = new ArrayList<>();
         for (Map.Entry<String, List<ForecastObjectForGroupingGeoposition>> entry : weatherForecastFoGeoposition.resultForecastMessageForGeoposition().entrySet()) {
             ResultForecastObjectForTGMessageGeoposition resultForecastMessageForDayGeo = new ResultForecastObjectForTGMessageGeoposition();
             dateForForecastObjectGeoposition = LocalDate.parse(entry.getKey(), formatForDate);
@@ -473,7 +471,7 @@ public class BenderBotWeatherMessageGenerator {
                                 break;
                             }
                         }
-                    resultForecastMessageGeo.add(resultForecastMessageForHoursGeo);
+                    resultForecastMessageGeoForHours.add(resultForecastMessageForHoursGeo);
                 }
             }
             else {
@@ -556,6 +554,7 @@ public class BenderBotWeatherMessageGenerator {
             resultForecastMessageGeo.add(resultForecastMessageForDayGeo);
             }
         }
+        resultForecastMessageGeo.addAll(0, resultForecastMessageGeoForHours);
         return resultForecastMessageGeo;
     }
 }
