@@ -1,6 +1,8 @@
 
 package com.ilnur.WeatherBot.Bot;
 
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import java.util.ArrayList;
@@ -14,8 +16,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 
 @Component
@@ -31,8 +34,10 @@ public class BotUser extends User {
     private Long botUserId;
     @Column(name = "user_name")
     private String botUserName;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn//(name="users_city_id_city")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name="user_city", joinColumns = @JoinColumn(name = "id"))
+    @Cascade(CascadeType.ALL)
+    @Column(name = "city")
     private List<BotUserFindCity> botFindCityList = new ArrayList<>();
 
     public BotUser() {

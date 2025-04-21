@@ -14,19 +14,40 @@ public class KeyBoard extends ReplyKeyboardMarkup {
     public KeyBoard() {
     }
     
-    public ReplyKeyboardMarkup geoLocationReplyKeyboard(CrudRepository<BotUserFindCity, Long> repo) {
+    public ReplyKeyboardMarkup geoLocationReplyKeyboard(CrudRepository<BotUser, Long> repo, Long id) {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
         KeyboardRow cityRow = new KeyboardRow();
         KeyboardButton geoCurrentWeatherButton = new KeyboardButton();
+        KeyboardButton cityNameButton;
         geoCurrentWeatherButton.setRequestLocation(true);
         geoCurrentWeatherButton.setText("Получить погоду по геолокации");
         row.add(geoCurrentWeatherButton);
         keyboard.add(row);
         keyboard.add(cityRow);
-        for (BotUserFindCity c : repo.findAll()) {
-//            int max1 = Integer.MIN_VALUE;
+        for (BotUser c : repo.findAll()) {
+            if(c.getBotUserId().equals(id)) {
+                for (BotUserFindCity m : c.getBotFindCityList()) {
+                    cityNameButton = new KeyboardButton();
+                    cityNameButton.setText(m.getCityName());
+                    cityRow.add(cityNameButton);
+//            if (cityRow.size() == 4) {
+//                KeyboardRow cityRow2 = new KeyboardRow();
+//                keyboard.add(cityRow2);
+//                KeyboardButton cityNameButton2 = new KeyboardButton();
+//                cityNameButton.setText(c.getCityName());
+//                cityRow.add(cityNameButton2);
+//            }
+                }
+            }
+        }
+        keyboardMarkup.setKeyboard(keyboard);
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+            return keyboardMarkup;
+        }
+    //            int max1 = Integer.MIN_VALUE;
 //            int max2 = Integer.MIN_VALUE;
 //            int max3 = Integer.MIN_VALUE;
 //            if (c.getCityFindCount() > max1)
@@ -41,21 +62,5 @@ public class KeyBoard extends ReplyKeyboardMarkup {
 //    {
 //        max3 = c.getCityFindCount();
 //    }
-            KeyboardButton cityNameButton = new KeyboardButton();
-            cityNameButton.setText(c.getCityName());
-            cityRow.add(cityNameButton);
-//            if (cityRow.size() == 4) {
-//                KeyboardRow cityRow2 = new KeyboardRow();
-//                keyboard.add(cityRow2);
-//                KeyboardButton cityNameButton2 = new KeyboardButton();
-//                cityNameButton.setText(c.getCityName());
-//                cityRow.add(cityNameButton2);
-//            }
-        }
-        keyboardMarkup.setKeyboard(keyboard);
-        keyboardMarkup.setSelective(true);
-        keyboardMarkup.setResizeKeyboard(true);
-            return keyboardMarkup;
-        }
     
 }
