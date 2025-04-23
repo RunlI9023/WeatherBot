@@ -62,7 +62,7 @@ public class BenderBot extends TelegramLongPollingBot {
                     Logger.getLogger(BenderBot.class.getName()).log(Level.WARNING, e.toString());
                 }
             }
-        else if (!"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
+        else if (!"/start".equals(update.getMessage().getText()) && !"/help".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
             setBotUserId(update.getMessage().getFrom().getId());
             String city = update.getMessage().getText();
             try {
@@ -74,6 +74,13 @@ public class BenderBot extends TelegramLongPollingBot {
                 Logger.getLogger(BenderBot.class.getName()).log(Level.WARNING, e.toString());
             } catch (ParseException e) {
                 Logger.getLogger(BenderBot.class.getName()).log(Level.WARNING, e.toString());
+            }
+        }
+        else if ("/help".equals(update.getMessage().getText())) {
+        try {
+                sendMess(benderBotWeatherMessage.help(getBotUserId()));
+            } catch (HttpClientErrorException e) {
+                Logger.getLogger(BenderBot.class.getName()).log(Level.INFO, e.toString());
             }
         }
     }

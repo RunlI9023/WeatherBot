@@ -92,16 +92,15 @@ public class BenderBotWeatherMessageGenerator {
     private final String dateForCurrentWeatherTextCity = dateToday.format(formatForFullDate);
     
     private final String hoursForCurrentWeatherTextCity = timeToday.format(formatForHoursShort);
-    private String currentWeatherTextCity;
+    
     
     private final String dateForCurrentWeatherTextGeo = dateToday.format(formatForFullDate);
     private final String hoursForCurrentWeatherTextGeo = timeToday.format(formatForHoursShort);
-    private String currentWeatherTextGeo;
     
-    private final String tgSendMessageFormatForHours = "%s: %-3s%+3d%-3s%2s%-3s%-3s%d%%\n";
-    private final String tgSendMessageFormatForDays = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%-3s%d%%\n";
-    private final String tgSendMessageFormatForCurrentWeatherNow = "Почасовой прогноз на сегодня, \n%s:\n\n";
-    private final String tgSendMessageFormatForCurrentWeatherGeo = "Почасовой прогноз на сегодня, \n%s:\n\n";
+    private final String tgSendMessageFormatForHours = "%s: %-3s%+3d%-3s%2s%-3s%4s%d%%\n";
+    private final String tgSendMessageFormatForDays = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%4s%d%%\n";
+    private final String tgSendMessageFormatForCurrentWeatherNow = "Погода в г. %s cегодня, %s:\n\n";
+    private final String tgSendMessageFormatForCurrentWeatherGeo = "Погода в г. %s cегодня, %s:\n\n";
     
 
     public BenderBotWeatherMessageGenerator() {
@@ -149,60 +148,59 @@ public class BenderBotWeatherMessageGenerator {
         return cityNotFoundMessage;
     }
     
+    public SendMessage help(Long who) {
+        String help = "Условные обозначения: " + "\n" + 
+                weatherEmoji.getSmallRedTriangleDown() + "- давление, мм.рт.ст.;" + "\n" +
+                weatherEmoji.getHumidity() + "- влажность воздуха;" + "\n" +
+                weatherEmoji.getSunny() + ", " + weatherEmoji.getCrescentMoon() + "- ясная погода;" + "\n" +
+                weatherEmoji.getCloudRain() + ", " + weatherEmoji.getCloudSnow() + "- небольшой дождь, небольшой снег;" + "\n" + 
+                weatherEmoji.getUmbrella() + ", " + weatherEmoji.getSnowflake() + "- ливень, снегопад;" + "\n" +
+                weatherEmoji.getCloudLightning() + "- гроза;" + "\n" +
+                weatherEmoji.getFog() + "- туман;" + "\n" +
+                weatherEmoji.getCloud() + "- пасмурно;" + "\n" +
+                weatherEmoji.getPartlySunny() + "- переменная облачность;" + "\n" +
+                weatherEmoji.getWhiteSunBehindCloud() + "- облачно с прояснениями;" + "\n" +
+                weatherEmoji.getWhiteSunBehindCloudRain() + "- облачно с прояснениями, возможен дождь;" + "\n" +
+                weatherEmoji.getWhiteSunSmallCloud() + "- небольшая облачность;"
+                ;
+        SendMessage cityNotFoundMessage = SendMessage.builder()
+                .chatId(who.toString())
+                .text(help)
+                .build();
+        return cityNotFoundMessage;
+    }
+    
     public SendMessage weatherForecastForGeoposition(Long who) throws JsonProcessingException, ParseException {
-        currentWeatherForGeoposition = benderBotRestClient.getCurrentWeatherForGeoposition(
-                     benderBotRestClient.getGeoLatitude().toString(), 
-                     benderBotRestClient.getGeoLongitude().toString());
         weatherForecastFoGeoposition = benderBotRestClient.getWeatherForecastForGeoposition(
                      benderBotRestClient.getGeoLatitude().toString(), 
                      benderBotRestClient.getGeoLongitude().toString());
         
-        String weatherEmojiForGeoposition = "";
-        switch(currentWeatherForGeoposition.getDescription()) {
-                            case "переменная облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getCloud();
-                                break;}
-                            case "облачно с прояснениями" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunBehindCloud();
-                                break;}
-                            case "пасмурно" -> {weatherEmojiForGeoposition = weatherEmoji.getCloud();
-                                break;}
-                            case "небольшая облачность" -> {weatherEmojiForGeoposition = weatherEmoji.getWhiteSunSmallCloud();
-                                break;}
-                            case "ясно" -> {weatherEmojiForGeoposition = weatherEmoji.getCrescentMoon();
-                                break;}
-                            case "небольшой снег" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudSnow();
-                                break;}
-                            case "небольшой дождь" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudRain();
-                                break;}
-                            case "дождь" -> {weatherEmojiForGeoposition = weatherEmoji.getCloudRain();
-                                break;}
-                            case "снег" -> {weatherEmojiForGeoposition = weatherEmoji.getSnowflake();
-                                break;}
-        }
-        String textOutForGeoposition = "";
-        String textInForGeoposition;
-        currentWeatherTextGeo = String.format(tgSendMessageFormatForCurrentWeatherGeo,dateForCurrentWeatherTextGeo);
-        textOutForGeoposition += currentWeatherTextGeo;
+        String weatherTextForMessageGeo = "";
+        String weatherForHoursTextGeo;
+        String weatherForWeekTextGeo;
+        String currentWeatherTextGeo;
+        currentWeatherTextGeo = String.format(tgSendMessageFormatForCurrentWeatherGeo,
+                weatherForecastFoGeoposition.getCity().getName(),
+                dateForCurrentWeatherTextGeo);
+        weatherTextForMessageGeo += currentWeatherTextGeo;
         for (int i = 0; i < getResultForecastObjectsForGeoposition().size(); i++) {     
-            if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
-/*
-*часть для сегодня по часам
-*/                  
-            textInForGeoposition = String.format(tgSendMessageFormatForHours,  
+            if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){         
+            weatherForHoursTextGeo = String.format(tgSendMessageFormatForHours,  
                 getResultForecastObjectsForGeoposition().get(i).getHours(),
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji(),
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()),
                 "\u2103",
-                "\u2913\u2913",
+                weatherEmoji.getSmallRedTriangleDown(),
                 getResultForecastObjectsForGeoposition().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForGeoposition().get(i).getHumidity());
-                textOutForGeoposition += textInForGeoposition;
+                weatherTextForMessageGeo += weatherForHoursTextGeo;
             }
 /*
 *часть для дней недели
 */            
             else {
-            textInForGeoposition = String.format(tgSendMessageFormatForDays,    
+            weatherForWeekTextGeo = String.format(tgSendMessageFormatForDays,    
                 getResultForecastObjectsForGeoposition().get(i).getDayOfWeek(),
                 getResultForecastObjectsForGeoposition().get(i).getDate(),
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfDay(),
@@ -211,67 +209,47 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight(),
                 Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()),
                 "\u2103",
-                "\u2913\u2913",
+                weatherEmoji.getSmallRedTriangleDown(),
                 getResultForecastObjectsForGeoposition().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForGeoposition().get(i).getHumidity());
-                textOutForGeoposition += textInForGeoposition;
+                weatherTextForMessageGeo += weatherForWeekTextGeo;
             } 
         }
         
         SendMessage weatherForecastForGeopositionMessage = SendMessage.builder()
                 .chatId(who.toString())
-                .text(textOutForGeoposition)
+                .text(weatherTextForMessageGeo)
                 .build();
         return weatherForecastForGeopositionMessage;
     }
     
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException {
         weatherForecastForCityNameMain = benderBotRestClient.getWeatherForecastForCityName(city);
-        currentWeatherForCityName = benderBotRestClient.getCurrentWeatherForCityName(city);
-        String currentWeatherEmoji = "";
         String weatherTextForMessageCity = "";
-        String bufferTextForMessageCity;
-        switch(currentWeatherForCityName.getDescription()) {
-                            case "переменная облачность" -> {currentWeatherEmoji = weatherEmoji.getCloud();
-                                break;}
-                            case "облачно с прояснениями" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunBehindCloud();
-                                break;}
-                            case "пасмурно" -> {currentWeatherEmoji = weatherEmoji.getCloud();
-                                break;}
-                            case "небольшая облачность" -> {currentWeatherEmoji = weatherEmoji.getWhiteSunSmallCloud();
-                                break;}
-                            case "ясно" -> {currentWeatherEmoji = weatherEmoji.getCrescentMoon();
-                                break;}
-                            case "небольшой снег" -> {currentWeatherEmoji = weatherEmoji.getCloudSnow();
-                                break;}
-                            case "небольшой дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRain();
-                                break;}
-                            case "дождь" -> {currentWeatherEmoji = weatherEmoji.getCloudRain();
-                                break;}
-                            case "снег" -> {currentWeatherEmoji = weatherEmoji.getSnowflake();
-                                break;}
-        }
-        currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
+        String weatherForHoursText;
+        String weatherForWeekText;
+        String currentWeatherTextCity;
+        
+        currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,
+                weatherForecastForCityNameMain.getCity().getName(),
+                dateForCurrentWeatherTextCity);
         weatherTextForMessageCity += currentWeatherTextCity;
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
-            bufferTextForMessageCity = String.format(tgSendMessageFormatForHours,
+            weatherForHoursText = String.format(tgSendMessageFormatForHours,
                 getResultForecastObjectsForCityName().get(i).getHours(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmoji(),
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMaximum()),
                 "\u2103",
-                "\u2913\u2913",//U+23F2weatherEmoji.getSmallRedTriangleDown(), //"\u21ca",//weatherEmoji.getExclamation(),
+                weatherEmoji.getSmallRedTriangleDown(), //"\u21ca",//weatherEmoji.getExclamation(),
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
-                    weatherTextForMessageCity += bufferTextForMessageCity;
-            }
-/*
-*часть для дней недели
-*/            
+                    weatherTextForMessageCity += weatherForHoursText;
+            }        
             else {
-            bufferTextForMessageCity = String.format(tgSendMessageFormatForDays,    
+            weatherForWeekText = String.format(tgSendMessageFormatForDays,    
                 getResultForecastObjectsForCityName().get(i).getDayOfWeek(),
                 getResultForecastObjectsForCityName().get(i).getDate(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfDay(),
@@ -280,11 +258,11 @@ public class BenderBotWeatherMessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfNight(),
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMinimum()),
                 "\u2103",
-                "\u2913\u2913",//weatherEmoji.getSmallRedTriangleDown(),
+                weatherEmoji.getSmallRedTriangleDown(),
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
-                weatherTextForMessageCity += bufferTextForMessageCity;
+                weatherTextForMessageCity += weatherForWeekText;
             } 
         }
 
@@ -337,6 +315,7 @@ public class BenderBotWeatherMessageGenerator {
                                 break;}
                             case "снег" -> {resultForecastMessageForHoursCity.setDescriptionEmoji(weatherEmoji.getSnowflake());
                                 break;
+                                
                             }
                         }
                     resultForecastMessageCityForHours.add(resultForecastMessageForHoursCity);
