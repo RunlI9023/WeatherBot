@@ -76,8 +76,8 @@ public class BenderBotWeatherMessageGenerator {
     private final DateTimeFormatter formatForDayOfWeek = DateTimeFormatter.ofPattern("EEEE", Locale.of("ru", "RU"));
     private final DateTimeFormatter formatForHours = DateTimeFormatter.ofPattern("HH:mm:ss");
     private final DateTimeFormatter formatForHoursShort = DateTimeFormatter.ofPattern("HH:mm");
-    private final LocalDate dateToday = LocalDate.now();
-    private final LocalTime timeToday = LocalTime.now();
+    private LocalDate dateToday = LocalDate.now();
+    private LocalTime timeToday = LocalTime.now();
     private LocalDate dateForForecastObjectCityName;
     private LocalTime timeForForecastObjectCityName;
     private String dayOfWeekForForecastObjectCityName;
