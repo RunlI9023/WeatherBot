@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Entity
 @Table(name = "users_city")
-public class BotUserFindCity {
+public class BotUserCity {
     
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
@@ -22,16 +22,16 @@ public class BotUserFindCity {
     @Column(name = "city_count")
     private int cityFindCount;
 
-    public BotUserFindCity() {
+    public BotUserCity() {
     }
 
-    public BotUserFindCity(Long id, String cityName, int cityFindCount) {
+    public BotUserCity(Long id, String cityName, int cityFindCount) {
         this.id = id;
         this.cityName = cityName;
         this.cityFindCount = cityFindCount;
     }
 
-    public BotUserFindCity(String cityName, int cityFindCount) {
+    public BotUserCity(String cityName, int cityFindCount) {
         this.cityName = cityName;
         this.cityFindCount = cityFindCount;
     }

@@ -1,6 +1,7 @@
 package com.ilnur.WeatherBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ilnur.WeatherBot.BotRepository.BotUserCityRepository;
 import com.ilnur.WeatherBot.BotRest.BotRestClient;
 import java.text.ParseException;
 import java.util.logging.Level;
@@ -25,23 +26,25 @@ public class WeatherBot extends TelegramLongPollingBot {
     private String botUserName;
     @Value("${botAdminId}")
     private Long botAdminId;
-    //private BotUserFindCity botUserFindCity;
+    //private BotUserCity botUserFindCity;
     private BotUser botUser;
     private final BotRestClient restClient;
     private final MessageGenerator messageGenerator;
     private final BotUserRepository userRepository;
+    private final BotUserCityRepository userCityRepository;
     private final KeyBoard keyboard;
     private SendMessage geoMessage;
     private static final Logger logger = Logger.getLogger(WeatherBot.class.getName());
     private final String startMessage = "Для того, чтобы узнать погоду, введи название нужного города или нажми на кнопку в меню для получения погоды по текущей геолокации";
     
     @Autowired
-    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUser botUser, KeyBoard keyboard) {
+    public WeatherBot(BotRestClient restClient, MessageGenerator messageGenerator, BotUserRepository userRepository, BotUser botUser, KeyBoard keyboard, BotUserCityRepository userCityRepository) {
         this.restClient = restClient;
         this.messageGenerator = messageGenerator;
         this.userRepository = userRepository;
         this.botUser = botUser;
         this.keyboard = keyboard;
+        this.userCityRepository = userCityRepository;
     }
     
     @Override
@@ -115,17 +118,18 @@ public class WeatherBot extends TelegramLongPollingBot {
                 /*
                 присваиваем не сам запрос, а имя города, которое пришло из API
                 */
-                    BotUserFindCity botUserFindCity = new BotUserFindCity();
+                    BotUserCity botUserFindCity = new BotUserCity();
                     botUserFindCity.setCityName(city);
                     botUserFindCity.setCityFindCount(1);
                 if(!userRepository.findByBotUserId(botUser.getBotUserId()).getBotFindCityList().contains(botUserFindCity.getCityName().equals(city))) {
                     botUser.getBotFindCityList().add(botUserFindCity);
+                    userCityRepository.save(botUserFindCity);
                     userRepository.save(botUser);
                     logger.log(Level.INFO, "Новый город добавлен, {0}", botUserFindCity.getCityName());
                     
                 }
                 else {
-                    for (BotUserFindCity c : botUser.getBotFindCityList()) {
+                    for (BotUserCity c : botUser.getBotFindCityList()) {
                         if (c.getCityName().equals(update.getMessage().getText())) {
                             c.cityFindCountIncrement(1);
                             userRepository.save(botUser);

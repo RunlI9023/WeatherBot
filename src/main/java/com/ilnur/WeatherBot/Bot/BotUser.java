@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -34,16 +35,14 @@ public class BotUser extends User {
     private Long botUserId;
     @Column(name = "user_name")
     private String botUserName;
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name="user_city", joinColumns = @JoinColumn(name = "id"))
-    @Cascade(CascadeType.ALL)
-    @Column(name = "city")
-    private List<BotUserFindCity> botFindCityList = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "tg_id")
+    private BotUserCity botFindCityList;
 
     public BotUser() {
     }
 
-    public BotUser(long id, String botUserName, Long botUserId, String botFindCity, List<BotUserFindCity> botFindCityList) {
+    public BotUser(long id, String botUserName, Long botUserId, String botFindCity, BotUserCity botFindCityList) {
         this.id = id;
         this.botUserName = botUserName;
         this.botUserId = botUserId;
@@ -79,11 +78,11 @@ public class BotUser extends User {
         this.botUserId = botUserId;
     }
 
-    public List<BotUserFindCity> getBotFindCityList() {
+    public BotUserCity getBotFindCityList() {
         return botFindCityList;
     }
 
-    public void setBotFindCityList(List<BotUserFindCity> botFindCityList) {
+    public void setBotFindCityList(BotUserCity botFindCityList) {
         this.botFindCityList = botFindCityList;
     }
 }

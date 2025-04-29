@@ -28,7 +28,7 @@ public class KeyBoard extends ReplyKeyboardMarkup {
         keyboard.add(cityRow);
         for (BotUser c : repo.findAll()) {
             if(c.getBotUserId().equals(id)) {
-                for (BotUserFindCity m : c.getBotFindCityList()) {
+                for (BotUserCity m : c.getBotFindCityList()) {
                     cityNameButton = new KeyboardButton();
                     cityNameButton.setText(m.getCityName());
                     cityRow.add(cityNameButton);
