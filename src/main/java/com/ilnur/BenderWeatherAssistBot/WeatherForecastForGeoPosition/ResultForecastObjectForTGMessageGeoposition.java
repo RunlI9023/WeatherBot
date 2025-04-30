@@ -1,8 +1,5 @@
 package com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition;
 
-import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.*;
-import com.ilnur.BenderWeatherAssistBot.Bot.BenderBotWeatherEmoji;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,6 +7,7 @@ public class ResultForecastObjectForTGMessageGeoposition {
     
     private String Date;
     private String Hours;
+    private String PressureEmoji;
     private String DescriptionEmoji;
     private String DescriptionEmojiOfDay;
     private String DescriptionEmojiOfNight;
@@ -28,7 +26,7 @@ public class ResultForecastObjectForTGMessageGeoposition {
 
     public ResultForecastObjectForTGMessageGeoposition() {}
 
-    public ResultForecastObjectForTGMessageGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessageGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed, String PressureEmoji) {
         this.Date = Date;
         this.DescriptionEmoji = DescriptionEmoji;
         this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
@@ -45,6 +43,7 @@ public class ResultForecastObjectForTGMessageGeoposition {
         this.Visibility = Visibility;
         this.Clouds = Clouds;
         this.WindSpeed = WindSpeed;
+        this.PressureEmoji = PressureEmoji;
     }
 
     public String getHours() {
@@ -184,5 +183,13 @@ public class ResultForecastObjectForTGMessageGeoposition {
 
     public void setDescriptionEmojiOfNight(String DescriptionEmojiOfNight) {
         this.DescriptionEmojiOfNight = DescriptionEmojiOfNight;
+    }
+    
+    public String getPressureEmoji() {
+        return PressureEmoji;
+    }
+
+    public void setPressureEmoji(String PressureEmoji) {
+        this.PressureEmoji = PressureEmoji;
     }
 }

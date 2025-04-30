@@ -1,7 +1,5 @@
 package com.ilnur.BenderWeatherAssistBot.BotRest;
 
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForCityName.CurrentWeatherForCityName;
-import com.ilnur.BenderWeatherAssistBot.CurrentWeatherForGeoPosition.CurrentWeatherForGeoposition;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForCityName.WeatherForecastForCityNameMain;
 import com.ilnur.BenderWeatherAssistBot.WeatherForecastForGeoPosition.WeatherForecastFoGeoposition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +26,6 @@ public class BenderBotRestClient {
         this.restClient = restClient;
     }
 
-    public CurrentWeatherForCityName getCurrentWeatherForCityName(String cityName) {
-        setCityName(cityName);
-        return restClient
-        .get()
-        .uri("https://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={weatherApiToken}&lang=ru&units=metric", 
-                getCityName(), getWeatherApiToken())
-        .accept(APPLICATION_JSON)
-        .retrieve()
-        .body(CurrentWeatherForCityName.class);
-    }
-    
     public WeatherForecastForCityNameMain getWeatherForecastForCityName(String cityName) {
         setCityName(cityName);
         return restClient
@@ -48,16 +35,6 @@ public class BenderBotRestClient {
         .accept(APPLICATION_JSON)
         .retrieve()
         .body(WeatherForecastForCityNameMain.class);
-    }
-    
-    public CurrentWeatherForGeoposition getCurrentWeatherForGeoposition(String lat, String lon) {
-        return restClient
-        .get()
-        .uri("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weatherApiToken}&lang=ru&units=metric", 
-                lat, lon, getWeatherApiToken())
-        .accept(APPLICATION_JSON)
-        .retrieve()
-        .body(CurrentWeatherForGeoposition.class);
     }
     
     public WeatherForecastFoGeoposition getWeatherForecastForGeoposition(String lat, String lon) {

@@ -10,6 +10,7 @@ public class ResultForecastObjectForTGMessageCity {
     private String Date;
     private String DayOfWeek;
     private String Hours;
+    private String PressureEmoji;
     private String DescriptionEmoji;
     private String DescriptionEmojiOfDay;
     private String DescriptionEmojiOfNight;
@@ -27,7 +28,10 @@ public class ResultForecastObjectForTGMessageCity {
 
     public ResultForecastObjectForTGMessageCity() {}
 
-    public ResultForecastObjectForTGMessageCity(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessageCity(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay,
+            String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay,
+            String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike,
+            Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed, String PressureEmoji) {
         this.Date = Date;
         this.DescriptionEmoji = DescriptionEmoji;
         this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
@@ -44,6 +48,7 @@ public class ResultForecastObjectForTGMessageCity {
         this.Visibility = Visibility;
         this.Clouds = Clouds;
         this.WindSpeed = WindSpeed;
+        this.PressureEmoji = PressureEmoji;
     }
 
     public String getHours() {
@@ -182,4 +187,14 @@ public class ResultForecastObjectForTGMessageCity {
     public void setDescriptionEmojiOfNight(String DescriptionEmojiOfNight) {
         this.DescriptionEmojiOfNight = DescriptionEmojiOfNight;
     }
+
+    public String getPressureEmoji() {
+        return PressureEmoji;
+    }
+
+    public void setPressureEmoji(String PressureEmoji) {
+        this.PressureEmoji = PressureEmoji;
+    }
+    
+    
 }
