@@ -52,9 +52,9 @@ Spring Web
 
 Docker
 
-Telegram Bot API
+[Telegram Bot API](https://core.telegram.org/bots/api)
 
-OpenWeatherMap API: https://openweathermap.org/api
+[OpenWeatherMap API](https://openweathermap.org/api)
 
 Полный список используемых зависимостей и версий компонентов можно найти в build.gradle
 
