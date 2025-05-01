@@ -35,7 +35,6 @@ public class BenderBotWeatherMessageGenerator {
     private final DateTimeFormatter FORMAT_FOR_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter FORMAT_FOR_FULL_DATE = DateTimeFormatter.ofPattern("d MMMM yyyy г.", Locale.of("ru", "RU"));
     private final DateTimeFormatter FORMAT_FOR_DAY_OF_WEEK = DateTimeFormatter.ofPattern("EEEE", Locale.of("ru", "RU"));
-    private final DateTimeFormatter FORMAT_FOR_HOURS_OF_DATE = DateTimeFormatter.ofPattern("HH:mm:ss");
     private final DateTimeFormatter FORMAT_FOR_HOURS_OF_DATE_SHORT = DateTimeFormatter.ofPattern("HH:mm");
     private final String FORMAT_FOR_HOURS = "%s: %-3s%+3d%-3s%2s%-3s%4s%d%%\n";
     private final String FORMAT_FOR_DAYS = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%4s%d%%\n";
@@ -44,11 +43,9 @@ public class BenderBotWeatherMessageGenerator {
     private final Double PRESSURE_RATIO = 0.750062;
     
     private LocalDate dateToday;
-    private LocalTime timeToday = LocalTime.now();
+    private LocalTime timeToday;
     private LocalDate dateForForecastObjectCityName;
-    private LocalTime timeForForecastObjectCityName;
     private LocalDate dateForForecastObjectGeoposition;
-    private LocalTime timeForForecastObjectGeoposition;
     
     private Double maxTemperatureForCityName;
     private Double minTemperatureForCityName;
@@ -62,12 +59,9 @@ public class BenderBotWeatherMessageGenerator {
     private String fullDateForForecastObjectGeoposition;
     private String dayOfWeekForCompareTodayAndNotToday;
     private String dateForCurrentWeatherTextCity;
-    private String hoursForCurrentWeatherTextCity;
     private String dateForCurrentWeatherTextGeo;
-    private String hoursForCurrentWeatherTextGeo;
     private String dayOfWeekForForecastObjectCityName;
     private String fullDateForForecastObjectCityName;
-    //от 750 до 765 мм рт. ст.
     
     public BenderBotWeatherMessageGenerator() {
     }
@@ -166,10 +160,7 @@ public class BenderBotWeatherMessageGenerator {
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForGeoposition().get(i).getHumidity());
                 weatherTextForMessageGeo += weatherForHoursTextGeo;
-            }
-/*
-*часть для дней недели
-*/            
+            }         
             else {
             weatherForWeekTextGeo = String.format(FORMAT_FOR_DAYS,    
                 getResultForecastObjectsForGeoposition().get(i).getDayOfWeek(),
@@ -253,9 +244,10 @@ public class BenderBotWeatherMessageGenerator {
             dateForForecastObjectCityName = LocalDate.parse(entry.getKey(), FORMAT_FOR_DATE);
             dayOfWeekForForecastObjectCityName = dateForForecastObjectCityName.format(FORMAT_FOR_DAY_OF_WEEK);
             dateToday = LocalDate.now();
+            timeToday = LocalTime.now();
             dayOfWeekForCompareTodayAndNotToday = dateToday.format(FORMAT_FOR_DAY_OF_WEEK);
             dateForCurrentWeatherTextCity = dateToday.format(FORMAT_FOR_FULL_DATE);
-            hoursForCurrentWeatherTextCity = timeToday.format(FORMAT_FOR_HOURS_OF_DATE_SHORT);
+            timeToday.format(FORMAT_FOR_HOURS_OF_DATE_SHORT);
             if (dateToday.toString().equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
                     ResultForecastObjectForTGMessageCity resultForecastMessageForHoursCity = new ResultForecastObjectForTGMessageCity();
@@ -400,9 +392,10 @@ public class BenderBotWeatherMessageGenerator {
             dateForForecastObjectGeoposition = LocalDate.parse(entry.getKey(), FORMAT_FOR_DATE);
             dayOfWeekForForecastObjectGeoposition = dateForForecastObjectGeoposition.format(FORMAT_FOR_DAY_OF_WEEK);
             dateToday = LocalDate.now();
+            timeToday = LocalTime.now();
             dayOfWeekForCompareTodayAndNotToday = dateToday.format(FORMAT_FOR_DAY_OF_WEEK);
             dateForCurrentWeatherTextGeo = dateToday.format(FORMAT_FOR_FULL_DATE);
-            hoursForCurrentWeatherTextGeo = timeToday.format(FORMAT_FOR_HOURS_OF_DATE_SHORT);
+            timeToday.format(FORMAT_FOR_HOURS_OF_DATE_SHORT);
             if (dateToday.toString().equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
                     ResultForecastObjectForTGMessageGeoposition resultForecastMessageForHoursGeo = new ResultForecastObjectForTGMessageGeoposition();

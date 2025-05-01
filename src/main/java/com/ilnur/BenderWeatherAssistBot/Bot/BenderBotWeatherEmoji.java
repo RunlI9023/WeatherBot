@@ -1,11 +1,6 @@
 package com.ilnur.BenderWeatherAssistBot.Bot;
 
-import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiParser;
-import com.vdurmont.emoji.EmojiManager;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
