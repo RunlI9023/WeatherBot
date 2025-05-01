@@ -1,3 +1,4 @@
+
 # WeatherAssistBot (Java)  
 Данный [телеграм-бот](https://t.me/Weather_AssistBot) позволяет узнать прогноз погоды по вашей текущей геопозиции (нажимая кнопку "Получить погоду по геопозиции") или введя название нужного города и отправиви его боту. 
 
@@ -52,9 +53,9 @@ Spring Web
 
 Docker
 
-Telegram Bot API
+[Telegram Bot API](https://core.telegram.org/bots/api)
 
-OpenWeatherMap API: https://openweathermap.org/api
+[OpenWeatherMap API](https://openweathermap.org/api)
 
 Полный список используемых зависимостей и версий компонентов можно найти в build.gradle
 
