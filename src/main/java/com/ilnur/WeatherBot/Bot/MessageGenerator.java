@@ -1,7 +1,7 @@
 package com.ilnur.WeatherBot.Bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ilnur.WeatherBot.BotRest.BotRestClient;
+import com.ilnur.WeatherBot.RestClient.BotRestClient;
 import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastForGeoposition;
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastForCityName;
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastObjectForGrouping;

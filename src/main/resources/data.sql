@@ -1,1 +1,1 @@
--- INSERT INTO weather_bot_users (bot_user_id, id, bot_user_name) VALUES (1419881124,1,'Ильнур');
+INSERT INTO bot_users (id, tg_id, user_name) VALUES (1, 1419881124, 'Ильнур');

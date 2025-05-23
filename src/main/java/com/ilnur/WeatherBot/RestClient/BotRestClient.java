@@ -1,4 +1,4 @@
-package com.ilnur.WeatherBot.BotRest;
+package com.ilnur.WeatherBot.RestClient;
 
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastForCityName;
 import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastForGeoposition;
@@ -42,7 +42,7 @@ public class BotRestClient {
         .retrieve()
         .body(ForecastForCityName.class);
         Thread currentThread = Thread.currentThread();
-        logger.log(Level.INFO, "Поток для запроса по названию: {0}",currentThread.getName());
+        //logger.log(Level.INFO, "Поток для запроса по названию: {0}",currentThread.getName());
         return CompletableFuture.completedFuture(forecastForCityName);
     }
     
@@ -56,7 +56,7 @@ public class BotRestClient {
         .retrieve()
         .body(ForecastForGeoposition.class);
         Thread currentThread = Thread.currentThread();
-        logger.log(Level.INFO, "Поток для запроса по геопозиции: {0}",currentThread.getName());
+        //logger.log(Level.INFO, "Поток для запроса по геопозиции: {0}",currentThread.getName());
         return CompletableFuture.completedFuture(forecastForGeoposition);
     }
     

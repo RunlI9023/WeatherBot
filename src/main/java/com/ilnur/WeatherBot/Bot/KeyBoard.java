@@ -1,8 +1,12 @@
 package com.ilnur.WeatherBot.Bot;
 
+import com.ilnur.WeatherBot.Entities.BotUser;
+import com.ilnur.WeatherBot.Entities.City;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import org.springframework.data.repository.CrudRepository;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -14,53 +18,31 @@ public class KeyBoard extends ReplyKeyboardMarkup {
     public KeyBoard() {
     }
     
-    public ReplyKeyboardMarkup geoLocationReplyKeyboard(CrudRepository<BotUser, Long> repo, Long id) {
+    public ReplyKeyboardMarkup geoLocationReplyKeyboard(BotUser user) {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
-        KeyboardRow cityRow = new KeyboardRow();
+        KeyboardRow cityRowFirst = new KeyboardRow();
         KeyboardButton geoCurrentWeatherButton = new KeyboardButton();
-        KeyboardButton cityNameButton;
+        KeyboardButton cityNameButtonForFirstRow;
         geoCurrentWeatherButton.setRequestLocation(true);
-        geoCurrentWeatherButton.setText("Получить погоду по геолокации");
+        geoCurrentWeatherButton.setText("Отправить геопозицию");
         row.add(geoCurrentWeatherButton);
         keyboard.add(row);
-        keyboard.add(cityRow);
-        for (BotUser c : repo.findAll()) {
-            if(c.getBotUserId().equals(id)) {
-                for (BotUserCity m : c.getBotFindCityList()) {
-                    cityNameButton = new KeyboardButton();
-                    cityNameButton.setText(m.getCityName());
-                    cityRow.add(cityNameButton);
-//            if (cityRow.size() == 4) {
-//                KeyboardRow cityRow2 = new KeyboardRow();
-//                keyboard.add(cityRow2);
-//                KeyboardButton cityNameButton2 = new KeyboardButton();
-//                cityNameButton.setText(c.getCityName());
-//                cityRow.add(cityNameButton2);
-//            }
-                }
-            }
+        keyboard.add(cityRowFirst);
+        List<City> top3 = user.getBotFindCityList()
+                .stream()
+                .sorted(Comparator.comparingInt(c -> c.getCityFindCount())).collect(Collectors.toList()).reversed();
+        for (City c : top3) {
+            cityNameButtonForFirstRow = new KeyboardButton();
+            cityNameButtonForFirstRow.setText(c.getCityName());
+            cityRowFirst.add(cityNameButtonForFirstRow);
         }
+        
         keyboardMarkup.setKeyboard(keyboard);
         keyboardMarkup.setSelective(true);
         keyboardMarkup.setResizeKeyboard(true);
             return keyboardMarkup;
-        }
-    //            int max1 = Integer.MIN_VALUE;
-//            int max2 = Integer.MIN_VALUE;
-//            int max3 = Integer.MIN_VALUE;
-//            if (c.getCityFindCount() > max1)
-//    {
-//        max3 = max2; max2 = max1; max1 = c.getCityFindCount();
-//    }
-//    else if (c.getCityFindCount() > max2)
-//    {
-//        max3 = max2; max2 = c.getCityFindCount();
-//    }
-//    else if (c.getCityFindCount() > max3)
-//    {
-//        max3 = c.getCityFindCount();
-//    }
+    }
     
 }

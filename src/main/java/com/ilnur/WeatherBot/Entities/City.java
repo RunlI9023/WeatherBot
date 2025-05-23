@@ -1,4 +1,4 @@
-package com.ilnur.WeatherBot.Bot;
+package com.ilnur.WeatherBot.Entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,29 +11,27 @@ import org.springframework.stereotype.Component;
 @Component
 @Entity
 @Table(name = "users_city")
-public class BotUserCity {
+public class City {
     
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
-    @Column(name = "id_city")
+    @Column(name = "city_id")
     private Long id;
-    @Column(name = "user_city")
+    @Column(name = "city_name")
     private String cityName;
     @Column(name = "city_count")
     private int cityFindCount;
 
-    public BotUserCity() {
+    public City() {
     }
 
-    public BotUserCity(Long id, String cityName, int cityFindCount) {
-        this.id = id;
+    public City(String cityName, int cityFindCount) {
         this.cityName = cityName;
         this.cityFindCount = cityFindCount;
     }
-
-    public BotUserCity(String cityName, int cityFindCount) {
+    
+    public City(String cityName) {
         this.cityName = cityName;
-        this.cityFindCount = cityFindCount;
     }
 
     public Long getId() {

@@ -1,13 +1,8 @@
+package com.ilnur.WeatherBot.Entities;
 
-package com.ilnur.WeatherBot.Bot;
-
-
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.User;
 import jakarta.persistence.Entity;
@@ -18,9 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
+import java.util.ArrayList;
 
 @Component
 @Entity
@@ -29,29 +22,23 @@ public class BotUser extends User {
     
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
-    @Column(name = "id")
+    @Column(name = "user_id")
     private Long id;
-    @Column(name = "tg_id")
+    @Column(name = "chat_id")
     private Long botUserId;
     @Column(name = "user_name")
     private String botUserName;
-    @OneToMany
-    @JoinColumn(name = "tg_id")
-    private BotUserCity botFindCityList;
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    //@JoinColumn(name = "bot_users_chat_id")
+    private List<City> botFindCityList = new ArrayList<>();
 
     public BotUser() {
     }
-
-    public BotUser(long id, String botUserName, Long botUserId, String botFindCity, BotUserCity botFindCityList) {
-        this.id = id;
+    
+    public BotUser(String botUserName, Long botUserId, List<City> botFindCityList) {
         this.botUserName = botUserName;
         this.botUserId = botUserId;
         this.botFindCityList = botFindCityList;
-    }
-
-    public BotUser(String botUserName, Long botUserId) {
-        this.botUserName = botUserName;
-        this.botUserId = botUserId;
     }
     
     public long getID() {
@@ -78,11 +65,11 @@ public class BotUser extends User {
         this.botUserId = botUserId;
     }
 
-    public BotUserCity getBotFindCityList() {
+    public List<City> getBotFindCityList() {
         return botFindCityList;
     }
 
-    public void setBotFindCityList(BotUserCity botFindCityList) {
+    public void setBotFindCityList(List<City> botFindCityList) {
         this.botFindCityList = botFindCityList;
     }
 }
