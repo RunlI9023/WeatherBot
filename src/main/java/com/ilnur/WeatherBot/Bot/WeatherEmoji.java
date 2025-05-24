@@ -24,15 +24,18 @@ public class WeatherEmoji {
     private String crescentMoon = EmojiParser.parseToUnicode(":crescent_moon:");
     private String umbrella = EmojiParser.parseToUnicode(":umbrella:");
     private String exclamation = EmojiParser.parseToUnicode(":exclamation:");
-    private String smallRedTriangleDown = EmojiParser.parseToUnicode(":small_red_triangle_down:");
-
+    private String check = EmojiParser.parseToUnicode(":white_check_mark:");
+    private String grey_exclamation = EmojiParser.parseToUnicode(":grey_exclamation:");
+    
+    
+    
     public WeatherEmoji() {
     }
     
     public WeatherEmoji(String humidity, String thermometer, String windBlowingFace, String cloud, 
             String fog, String thunderCloudRain, String whiteSunSmallCloud, String whiteSunBehindCloud, 
             String whiteSunBehindCloudRain, String cloudRain, String cloudSnow, String cloudLightning, String partlySunny, 
-            String sunny, String snowflake, String crescentMoon, String umbrella, String exclamation, String smallRedTriangleDown) {
+            String sunny, String snowflake, String crescentMoon, String umbrella, String exclamation, String check, String grey_exclamation) {
         this.humidity = humidity;
         this.thermometer = thermometer;
         this.windBlowingFace = windBlowingFace;
@@ -51,7 +54,8 @@ public class WeatherEmoji {
         this.crescentMoon = crescentMoon;
         this.umbrella = umbrella;
         this.exclamation = exclamation;
-        this.smallRedTriangleDown = smallRedTriangleDown;
+        this.check = check;
+        this.grey_exclamation = grey_exclamation;
     }
 
     public String getHumidity() {
@@ -126,7 +130,11 @@ public class WeatherEmoji {
         return exclamation;
     }
 
-    public String getSmallRedTriangleDown() {
-        return smallRedTriangleDown;
+    public String getCheck() {
+        return check;
+    }
+
+    public String getGrey_exclamation() {
+        return grey_exclamation;
     }
 }

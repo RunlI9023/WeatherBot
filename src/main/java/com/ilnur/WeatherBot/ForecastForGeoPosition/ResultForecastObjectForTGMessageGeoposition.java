@@ -21,13 +21,14 @@ public class ResultForecastObjectForTGMessageGeoposition {
     private Double TempFeelsLike;
     private Integer Humidity;
     private Integer Pressure;
+    private String pressureEmoji;
     private Integer Visibility;
     private Integer Clouds;
     private Double WindSpeed;
 
     public ResultForecastObjectForTGMessageGeoposition() {}
 
-    public ResultForecastObjectForTGMessageGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed) {
+    public ResultForecastObjectForTGMessageGeoposition(String Date, String DescriptionEmoji, String DescriptionEmojiOfDay, String DescriptionEmojiOfNight, String DayOfWeek, String Description, String DescriptionOfDay, String DescriptionOfNight, Double TempMaximum, Double TempMinimum, Double TempFeelsLike, Integer Humidity, Integer Pressure, Integer Visibility, Integer Clouds, Double WindSpeed, String pressureEmoji) {
         this.Date = Date;
         this.DescriptionEmoji = DescriptionEmoji;
         this.DescriptionEmojiOfDay = DescriptionEmojiOfDay;
@@ -44,6 +45,7 @@ public class ResultForecastObjectForTGMessageGeoposition {
         this.Visibility = Visibility;
         this.Clouds = Clouds;
         this.WindSpeed = WindSpeed;
+        this.pressureEmoji = pressureEmoji;
     }
 
     public String getHours() {
@@ -53,8 +55,14 @@ public class ResultForecastObjectForTGMessageGeoposition {
     public void setHours(String Hours) {
         this.Hours = Hours;
     }
-    
-    
+
+    public String getPressureEmoji() {
+        return pressureEmoji;
+    }
+
+    public void setPressureEmoji(String pressureEmoji) {
+        this.pressureEmoji = pressureEmoji;
+    }
 
     public String getDate() {
         return Date;

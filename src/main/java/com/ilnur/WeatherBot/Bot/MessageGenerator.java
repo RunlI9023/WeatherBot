@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 @Component
 public class MessageGenerator {
@@ -32,65 +30,53 @@ public class MessageGenerator {
     private ForecastForGeoposition forecastFoGeoposition;
     private BotRestClient restClient;
     private WeatherEmoji weatherEmoji;
-    //private ReplyKeyboardMarkup geoLocationReplyKeyboard;
     
-    private final Double pressureConst = 0.750062;
+    private final DateTimeFormatter FORMAT_FOR_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter FORMAT_FOR_FULL_DATE = DateTimeFormatter.ofPattern("d MMMM yyyy г.", Locale.of("ru", "RU"));
+    private final DateTimeFormatter FORMAT_FOR_DAY_OF_WEEK = DateTimeFormatter.ofPattern("EEEE", Locale.of("ru", "RU"));
+    private final DateTimeFormatter FORMAT_FOR_HOURS_SHORT = DateTimeFormatter.ofPattern("HH:mm");
+    private final String FORMAT_FOR_HOURS = "%s: %-3s%+3d%-3s%2s%-3s%-3s%d%%\n";
+    private final String FORMAT_FOR_DAYS = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%-3s%d%%\n";
+    private final String FORMAT_FOR_CURRENT_WEATHER_CITY = "Погода в г. %s cегодня,\n%s:\n\n";
+    private final String FORMAT_FOR_CURRENT_WEATHER_GEO = "Погода в г. %s cегодня,\n%s:\n\n";
+    private final Double PRESSURE_RATIO = 0.750062;
+    
+    private LocalDate dateToday;
+    private LocalTime timeToday;
+    private LocalDate dateForForecastObjectGeoposition;
+    private LocalDate dateForForecastObjectCityName;
     
     private Double maxTemperatureForCityName;
     private Double minTemperatureForCityName;
     private Integer humidityForCityName;
     private Integer maxPressureForCityName;
-    
     private Double maxTemperatureForGeoposition;
     private Double minTemperatureForGeoposition;
     private Integer humidityForGeoposition;
     
-    private final DateTimeFormatter formatForDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private final DateTimeFormatter formatForFullDate = DateTimeFormatter.ofPattern("d MMMM yyyy г.", Locale.of("ru", "RU"));
-    private final DateTimeFormatter formatForDayOfWeek = DateTimeFormatter.ofPattern("EEEE", Locale.of("ru", "RU"));
-    private final DateTimeFormatter formatForHours = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private final DateTimeFormatter formatForHoursShort = DateTimeFormatter.ofPattern("HH:mm");
-    private final LocalDate dateToday = LocalDate.now();
-    private final LocalTime timeToday = LocalTime.now();
-    private LocalDate dateForForecastObjectCityName;
-    private LocalTime timeForForecastObjectCityName;
     private String dayOfWeekForForecastObjectCityName;
     private String fullDateForForecastObjectCityName;
-
-    private LocalDate dateForForecastObjectGeoposition;
-    private LocalTime timeForForecastObjectGeoposition;
     private String dayOfWeekForForecastObjectGeoposition;
     private String fullDateForForecastObjectGeoposition;
-    private final String dayOfWeekForCompareTodayAndNotToday = dateToday.format(formatForDayOfWeek);
-    
+    private String dayOfWeekForCompareTodayAndNotToday;
     private String cityNameForDB;
-    private final String dateForCurrentWeatherTextCity = dateToday.format(formatForFullDate);
-    private final String hoursForCurrentWeatherTextCity = timeToday.format(formatForHoursShort);
+    private String dateForCurrentWeatherTextCity;
+    private String dateForCurrentWeatherTextGeo;
     private String currentWeatherTextCity;
-    
-    private String weatherTextForMessageGeo = "";
-    private String bufferTextForMessageGeo;
-    private final String dateForCurrentWeatherTextGeo = dateToday.format(formatForFullDate);
-    private final String hoursForCurrentWeatherTextGeo = timeToday.format(formatForHoursShort);
     private String currentWeatherTextGeo;
-    
-    private final String tgSendMessageFormatForHours = "%s: %-3s%+3d%-3s%2s%-3s%-3s%d%%\n";
-    private final String tgSendMessageFormatForDays = "\n%s, %s:\n%-3s%+3d%-2s   %-3s%+3d%-2s%4s%3s%-3s%d%%\n";
-    private final String tgSendMessageFormatForCurrentWeatherNow = "Почасовой прогноз на сегодня, \n%s:\n\n";
-    
 
     public MessageGenerator() {
     }
 
     @Autowired
-    public MessageGenerator(BotRestClient restClient, WeatherEmoji weatherEmoji/*, ReplyKeyboardMarkup geoLocationReplyKeyboard*/) {
+    public MessageGenerator(BotRestClient restClient, WeatherEmoji weatherEmoji) {
         this.restClient = restClient;
         this.weatherEmoji = weatherEmoji;
-        //this.geoLocationReplyKeyboard = geoLocationReplyKeyboard;
     }
     
     public SendMessage greetingUser(Long who, String userName) {
-        SendMessage greetingUserMessage = SendMessage.builder()
+        SendMessage greetingUserMessage = SendMessage
+                .builder()
                 .chatId(who.toString())
                 .text("Привет, " + userName + "!")
                 .build();
@@ -98,26 +84,44 @@ public class MessageGenerator {
     }
 
     public SendMessage forAdmin(Long who, String userName, long userId) {
-        SendMessage forAdmin = SendMessage.builder()
+        SendMessage forAdmin = SendMessage
+                .builder()
                 .chatId(who.toString())
                 .text("Присоединился новый пользователь, имя: " + userName + ", ID: " + userId)
                 .build();
         return forAdmin;
     }
-
-//    public SendMessage requestGeoPosition(Long who) {
-//        SendMessage requestGeoPositionMessage = SendMessage.builder()
-//                .chatId(who.toString())
-//                .replyMarkup(geoLocationReplyKeyboard)
-//                .text("Для того, чтобы узнать погоду, "
-//                        + "введи название нужного города или нажми на кнопку "
-//                        + "в меню для получения погоды по текущей геолокации")
-//                .build();
-//        return requestGeoPositionMessage;
-//    }
+    
+        public SendMessage help(Long who) {
+        String help = "Условные обозначения: " + "\n" + 
+                weatherEmoji.getCheck() + " - атмосферное давление в норме, от 755 до 765 мм.рт.ст." + "\n" +
+                weatherEmoji.getExclamation() + " - повышенное атмосферное давление" + "\n" +
+                weatherEmoji.getGrey_exclamation() + " - пониженное атмосферное давление" + "\n" +
+                weatherEmoji.getHumidity() + " - влажность воздуха" + "\n" +
+                weatherEmoji.getSunny() + ", " + weatherEmoji.getCrescentMoon() + " - ясная погода" + "\n" +
+                weatherEmoji.getCloudRain() + " - небольшой дождь, возьмите зонт!" + "\n" +
+                weatherEmoji.getCloudSnow() + " - небольшой снег" + "\n" +
+                weatherEmoji.getUmbrella() + " - возможен сильный дождь, возьмите зонт!" + "\n" +
+                weatherEmoji.getSnowflake() + " - возможен сильный снегопад, будьте осторожны на дорогах!" + "\n" +
+                weatherEmoji.getCloudLightning() + " - гроза" + "\n" +
+                weatherEmoji.getFog() + " - туман" + "\n" +
+                weatherEmoji.getCloud() + " - пасмурно" + "\n" +
+                weatherEmoji.getPartlySunny() + " - облачно с прояснениями" + "\n" +
+                weatherEmoji.getWhiteSunBehindCloud() + " - переменная облачность" + "\n" +
+                weatherEmoji.getWhiteSunBehindCloudRain() + " - облачно с прояснениями, возможен дождь" + "\n" +
+                weatherEmoji.getWhiteSunSmallCloud() + " - небольшая облачность";
+        
+        SendMessage helpMessage = SendMessage
+                .builder()
+                .chatId(who.toString())
+                .text(help)
+                .build();
+        return helpMessage;
+        }
     
     public SendMessage cityNotFound(Long who) {
-        SendMessage cityNotFoundMessage = SendMessage.builder()
+        SendMessage cityNotFoundMessage = SendMessage
+                .builder()
                 .chatId(who.toString())
                 .text("Город не найден. Проверь корректность ввода и повтори попытку.")
                 .build();
@@ -131,45 +135,60 @@ public class MessageGenerator {
         restClient.getWeatherForecastForGeoposition(restClient.getGeoLatitude().toString(), 
                      restClient.getGeoLongitude().toString()).complete(forecastFoGeoposition);
         
-        String weatherEmojiForGeoposition = "";
-        String textOutForGeoposition = "";
-        String textInForGeoposition;
-        String textInTabOne = "";
-        int textInTabOneLength = textInTabOne.length();
-        String textInTabTwo = "";
-        int textInTabTwoLength = textInTabTwo.length();
-        String textInTabThree = "";
-        int textInTabThreeLength = textInTabThree.length();
-        String textInTabFour = "";
-        int textInTabFourLength = textInTabFour.length();
+        dateToday = LocalDate.now();
+        dateForCurrentWeatherTextGeo = dateToday.format(FORMAT_FOR_FULL_DATE);
+        String weatherTextForMessageGeo = "";
+        String weatherForHoursTextGeo;
+        String weatherForWeekTextGeo;
+        currentWeatherTextGeo = String.format(FORMAT_FOR_CURRENT_WEATHER_GEO,
+                forecastFoGeoposition.getCity().getName(),
+                dateForCurrentWeatherTextGeo);
+        
+        setCityNameForDB(forecastFoGeoposition.getCity().getName());
+        
+        weatherTextForMessageGeo += currentWeatherTextGeo;
+        
         for (int i = 0; i < getResultForecastObjectsForGeoposition().size(); i++) {     
             if (getResultForecastObjectsForGeoposition().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){                
-            textInForGeoposition = "\n" +    
-                getResultForecastObjectsForGeoposition().get(i).getHours() + ":" + textInTabOne +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji() + textInTabTwo +
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + textInTabThree + 
-                weatherEmoji.getHumidity() + textInTabFour + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%"
-                ;
-                textOutForGeoposition += textInForGeoposition;
+            weatherForHoursTextGeo = String.format(FORMAT_FOR_HOURS,
+                getResultForecastObjectsForGeoposition().get(i).getHours(),
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmoji(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()),
+                "\u2103",
+                getResultForecastObjectsForGeoposition().get(i).getPressureEmoji(),
+                getResultForecastObjectsForGeoposition().get(i).getPressure(),
+                weatherEmoji.getHumidity(),
+                getResultForecastObjectsForGeoposition().get(i).getHumidity());
+                
+                weatherTextForMessageGeo += weatherForHoursTextGeo;
             }     
             else {
-            textInForGeoposition = "\n" +    
-                getResultForecastObjectsForGeoposition().get(i).getDayOfWeek() + ", " + 
-                getResultForecastObjectsForGeoposition().get(i).getDate() + ": " + "\n" +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfDay() + "  " +
-                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight() + "  " +
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()) + "\u2103" + "  " + 
-                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()) + "\u2103" + "  " +
-                weatherEmoji.getHumidity() + " " + getResultForecastObjectsForGeoposition().get(i).getHumidity() + "%";
-                textOutForGeoposition += textInForGeoposition;
+            weatherForWeekTextGeo = String.format(FORMAT_FOR_DAYS,
+                getResultForecastObjectsForGeoposition().get(i).getDayOfWeek(),
+                getResultForecastObjectsForGeoposition().get(i).getDate(),
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfDay(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMaximum()),
+                "\u2103",
+                getResultForecastObjectsForGeoposition().get(i).getDescriptionEmojiOfNight(),
+                Math.round(getResultForecastObjectsForGeoposition().get(i).getTempMinimum()),
+                "\u2103",
+                getResultForecastObjectsForGeoposition().get(i).getPressureEmoji(),
+                getResultForecastObjectsForGeoposition().get(i).getPressure(),
+                weatherEmoji.getHumidity(),
+                getResultForecastObjectsForGeoposition().get(i).getHumidity());
+            
+                weatherTextForMessageGeo += weatherForWeekTextGeo;
             } 
         }
         
-        SendMessage weatherForecastForGeopositionMessage = SendMessage.builder()
+        SendMessage weatherForecastForGeopositionMessage = SendMessage
+                .builder()
                 .chatId(who.toString())
-                .text(textOutForGeoposition)
+                .text(weatherTextForMessageGeo)
                 .build();
         return weatherForecastForGeopositionMessage;
+        
+        
     }
     
     public SendMessage weatherForecastForCityName(Long who, String city) throws JsonProcessingException, ParseException, InterruptedException, ExecutionException {
@@ -178,25 +197,27 @@ public class MessageGenerator {
         cityNameForDB = forecastForCityName.getCity().toString();
         String bufferTextForHoursMessageCity;
         String bufferTextForDaysMessageCity;
-        //geoLocationReplyKeyboard.getKeyboard().add(new KeyboardRow().add(e));
-        //System.out.println(forecastForCityName.getCity().getSunrise() + " : " + forecastForCityName.getCity().getSunset());
-        currentWeatherTextCity = String.format(tgSendMessageFormatForCurrentWeatherNow,dateForCurrentWeatherTextCity);
-        String weatherTextForMessageCity = "";
+        dateToday = LocalDate.now();
+        dayOfWeekForCompareTodayAndNotToday = dateToday.format(FORMAT_FOR_DAY_OF_WEEK);
+        dateForCurrentWeatherTextCity = dateToday.format(FORMAT_FOR_FULL_DATE);
+        currentWeatherTextCity = String.format(FORMAT_FOR_CURRENT_WEATHER_CITY, forecastForCityName.getCity().getName(),dateForCurrentWeatherTextCity);
+        String weatherTextForMessageCity = ""; 
+        weatherTextForMessageCity += currentWeatherTextCity;
         for (int i = 0; i < getResultForecastObjectsForCityName().size(); i++) {
             if (getResultForecastObjectsForCityName().get(i).getDayOfWeek().equals(dayOfWeekForCompareTodayAndNotToday)){
-            bufferTextForHoursMessageCity = String.format(tgSendMessageFormatForHours,
+            bufferTextForHoursMessageCity = String.format(FORMAT_FOR_HOURS,
                 getResultForecastObjectsForCityName().get(i).getHours(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmoji(),
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMaximum()),
                 "\u2103",
-                "\u2913\u2913",//U+23F2weatherEmoji.getSmallRedTriangleDown(), //"\u21ca",//weatherEmoji.getExclamation(),
+                getResultForecastObjectsForCityName().get(i).getPressureEmoji(),
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
                     weatherTextForMessageCity += bufferTextForHoursMessageCity;
             }       
             else {
-            bufferTextForDaysMessageCity = String.format(tgSendMessageFormatForDays,    
+            bufferTextForDaysMessageCity = String.format(FORMAT_FOR_DAYS,    
                 getResultForecastObjectsForCityName().get(i).getDayOfWeek(),
                 getResultForecastObjectsForCityName().get(i).getDate(),
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfDay(),
@@ -205,7 +226,7 @@ public class MessageGenerator {
                 getResultForecastObjectsForCityName().get(i).getDescriptionEmojiOfNight(),
                 Math.round(getResultForecastObjectsForCityName().get(i).getTempMinimum()),
                 "\u2103",
-                "\u2913\u2913",//weatherEmoji.getSmallRedTriangleDown(),
+                getResultForecastObjectsForCityName().get(i).getPressureEmoji(),
                 getResultForecastObjectsForCityName().get(i).getPressure(),
                 weatherEmoji.getHumidity(),
                 getResultForecastObjectsForCityName().get(i).getHumidity());
@@ -213,9 +234,10 @@ public class MessageGenerator {
             } 
         }
 
-        SendMessage weatherForecastForCityNameMessage = SendMessage.builder()
+        SendMessage weatherForecastForCityNameMessage = SendMessage
+                .builder()
                 .chatId(who.toString())
-                .text(currentWeatherTextCity + weatherTextForMessageCity)
+                .text(weatherTextForMessageCity)
                 .build();
         return weatherForecastForCityNameMessage;
     }
@@ -225,8 +247,13 @@ public class MessageGenerator {
         List<ResultForecastObjectForTGMessageCity> resultForecastMessageCityForHours = new ArrayList<>();
         for (Map.Entry<String, List<ForecastObjectForGrouping>> entry : forecastForCityName.resultForecastMessage().entrySet()) {
             ResultForecastObjectForTGMessageCity resultForecastMessageForDayCity = new ResultForecastObjectForTGMessageCity();
-            dateForForecastObjectCityName = LocalDate.parse(entry.getKey(), formatForDate);
-            dayOfWeekForForecastObjectCityName = dateForForecastObjectCityName.format(formatForDayOfWeek);
+            dateForForecastObjectCityName = LocalDate.parse(entry.getKey(), FORMAT_FOR_DATE);
+            dayOfWeekForForecastObjectCityName = dateForForecastObjectCityName.format(FORMAT_FOR_DAY_OF_WEEK);
+            dateToday = LocalDate.now();
+            timeToday = LocalTime.now();
+            dayOfWeekForCompareTodayAndNotToday = dateToday.format(FORMAT_FOR_DAY_OF_WEEK);
+            dateForCurrentWeatherTextCity = dateToday.format(FORMAT_FOR_FULL_DATE);
+            timeToday.format(FORMAT_FOR_HOURS_SHORT);
             if (dateToday.toString().equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
                     ResultForecastObjectForTGMessageCity resultForecastMessageForHoursCity = new ResultForecastObjectForTGMessageCity();
@@ -234,7 +261,16 @@ public class MessageGenerator {
                     resultForecastMessageForHoursCity.setDayOfWeek(dayOfWeekForForecastObjectCityName);
                     resultForecastMessageForHoursCity.setTempMaximum(entry.getValue().get(i).getTempMaximum());
                     resultForecastMessageForHoursCity.setHumidity(entry.getValue().get(i).getHumidity());
-                    resultForecastMessageForHoursCity.setPressure((int)((entry.getValue().get(i).getPressure()) * pressureConst));
+                    resultForecastMessageForHoursCity.setPressure((int)((entry.getValue().get(i).getPressure()) * PRESSURE_RATIO));
+                    if (resultForecastMessageForHoursCity.getPressure() >= 755 && resultForecastMessageForHoursCity.getPressure() <= 765) {
+                        resultForecastMessageForHoursCity.setPressureEmoji(weatherEmoji.getCheck());
+                    }
+                    else if (resultForecastMessageForHoursCity.getPressure() > 765) {
+                        resultForecastMessageForHoursCity.setPressureEmoji(weatherEmoji.getExclamation());
+                    }
+                    else if (resultForecastMessageForHoursCity.getPressure() < 755) {
+                        resultForecastMessageForHoursCity.setPressureEmoji(weatherEmoji.getGrey_exclamation());
+                    }
                     resultForecastMessageForHoursCity.setDescription(entry.getValue().get(i).getDescription());
                         switch(entry.getValue().get(i).getDescription()) {
                             case "переменная облачность" -> {resultForecastMessageForHoursCity.setDescriptionEmoji(weatherEmoji.getCloud());
@@ -261,7 +297,7 @@ public class MessageGenerator {
                 }
             }
             else {
-            fullDateForForecastObjectCityName = dateForForecastObjectCityName.format(formatForFullDate);
+            fullDateForForecastObjectCityName = dateForForecastObjectCityName.format(FORMAT_FOR_FULL_DATE);
             maxTemperatureForCityName = Collections.max(entry.getValue()
                 .stream()
                 .map(r -> r.getTempMaximum())
@@ -285,7 +321,16 @@ public class MessageGenerator {
             resultForecastMessageForDayCity.setTempMaximum(maxTemperatureForCityName);
             resultForecastMessageForDayCity.setTempMinimum(minTemperatureForCityName);
             resultForecastMessageForDayCity.setHumidity(humidityForCityName);
-            resultForecastMessageForDayCity.setPressure((int)(pressureConst *  maxPressureForCityName));
+            resultForecastMessageForDayCity.setPressure((int)(PRESSURE_RATIO *  maxPressureForCityName));
+            if (resultForecastMessageForDayCity.getPressure() >= 755 && resultForecastMessageForDayCity.getPressure() <= 765) {
+                resultForecastMessageForDayCity.setPressureEmoji(weatherEmoji.getCheck());
+            }
+            else if (resultForecastMessageForDayCity.getPressure() > 765) {
+                resultForecastMessageForDayCity.setPressureEmoji(weatherEmoji.getExclamation());
+            }
+            else if (resultForecastMessageForDayCity.getPressure() < 755) {
+                resultForecastMessageForDayCity.setPressureEmoji(weatherEmoji.getGrey_exclamation());
+            }
             for (int j = 0; j < entry.getValue().size(); j++) {
                 switch (entry.getValue().get(j).getDate().substring(11, 16)) {
                     case "12:00" -> {
@@ -338,7 +383,6 @@ public class MessageGenerator {
                 }
             }
             resultForecastMessageCity.add(resultForecastMessageForDayCity);
-            
             }
         }
         resultForecastMessageCity.addAll(0, resultForecastMessageCityForHours);
@@ -350,8 +394,13 @@ public class MessageGenerator {
         
         for (Map.Entry<String, List<ForecastObjectForGroupingGeoposition>> entry : forecastFoGeoposition.resultForecastMessageForGeoposition().entrySet()) {
             ResultForecastObjectForTGMessageGeoposition resultForecastMessageForDayGeo = new ResultForecastObjectForTGMessageGeoposition();
-            dateForForecastObjectGeoposition = LocalDate.parse(entry.getKey(), formatForDate);
-            dayOfWeekForForecastObjectGeoposition = dateForForecastObjectGeoposition.format(formatForDayOfWeek);
+            dateForForecastObjectGeoposition = LocalDate.parse(entry.getKey(), FORMAT_FOR_DATE);
+            dayOfWeekForForecastObjectGeoposition = dateForForecastObjectGeoposition.format(FORMAT_FOR_DAY_OF_WEEK);
+            dateToday = LocalDate.now();
+            timeToday = LocalTime.now();
+            dayOfWeekForCompareTodayAndNotToday = dateToday.format(FORMAT_FOR_DAY_OF_WEEK);
+            dateForCurrentWeatherTextGeo = dateToday.format(FORMAT_FOR_FULL_DATE);
+            timeToday.format(FORMAT_FOR_HOURS_SHORT);
             if (dateToday.toString().equals(entry.getKey().substring(0, 10))) {
                 for (int i = 0; i < entry.getValue().size() ; i++) {
                     ResultForecastObjectForTGMessageGeoposition resultForecastMessageForHoursGeo = new ResultForecastObjectForTGMessageGeoposition();
@@ -359,6 +408,16 @@ public class MessageGenerator {
                     resultForecastMessageForHoursGeo.setDayOfWeek(dayOfWeekForForecastObjectGeoposition);
                     resultForecastMessageForHoursGeo.setTempMaximum(entry.getValue().get(i).getTempMaximum());
                     resultForecastMessageForHoursGeo.setHumidity(entry.getValue().get(i).getHumidity());
+                    resultForecastMessageForHoursGeo.setPressure((int)((entry.getValue().get(i).getPressure()) * PRESSURE_RATIO));
+                    if (resultForecastMessageForHoursGeo.getPressure() >= 755 && resultForecastMessageForHoursGeo.getPressure() <= 765) {
+                        resultForecastMessageForHoursGeo.setPressureEmoji(weatherEmoji.getCheck());
+                    }
+                    else if (resultForecastMessageForHoursGeo.getPressure() > 765) {
+                        resultForecastMessageForHoursGeo.setPressureEmoji(weatherEmoji.getExclamation());
+                    }
+                    else if (resultForecastMessageForHoursGeo.getPressure() < 755) {
+                        resultForecastMessageForHoursGeo.setPressureEmoji(weatherEmoji.getGrey_exclamation());
+                    }
                     resultForecastMessageForHoursGeo.setDescription(entry.getValue().get(i).getDescription());
                         switch(entry.getValue().get(i).getDescription()) {
                             case "переменная облачность" -> {resultForecastMessageForHoursGeo.setDescriptionEmoji(weatherEmoji.getCloud());
@@ -386,7 +445,7 @@ public class MessageGenerator {
             }
             else {
             
-            fullDateForForecastObjectGeoposition = dateForForecastObjectGeoposition.format(formatForFullDate);
+            fullDateForForecastObjectGeoposition = dateForForecastObjectGeoposition.format(FORMAT_FOR_FULL_DATE);
             maxTemperatureForGeoposition = Collections.max(entry.getValue()
                 .stream()
                 .map(r -> r.getTempMaximum())
@@ -400,10 +459,25 @@ public class MessageGenerator {
                 .map(r -> r.getHumidity())
                 .collect(Collectors.toList()));
             
+            Integer press = Collections.max(entry.getValue()
+                .stream()
+                .map(r -> r.getPressure())
+                .collect(Collectors.toList()));
+            
             resultForecastMessageForDayGeo.setDate(fullDateForForecastObjectGeoposition);
             resultForecastMessageForDayGeo.setDayOfWeek(dayOfWeekForForecastObjectGeoposition);
             resultForecastMessageForDayGeo.setTempMaximum(maxTemperatureForGeoposition);
             resultForecastMessageForDayGeo.setTempMinimum(minTemperatureForGeoposition);
+            resultForecastMessageForDayGeo.setPressure((int)(PRESSURE_RATIO *  press));
+            if (resultForecastMessageForDayGeo.getPressure() >= 755 && resultForecastMessageForDayGeo.getPressure() <= 765) {
+                resultForecastMessageForDayGeo.setPressureEmoji(weatherEmoji.getCheck());
+            }
+            else if (resultForecastMessageForDayGeo.getPressure() > 765) {
+                resultForecastMessageForDayGeo.setPressureEmoji(weatherEmoji.getExclamation());
+            }
+            else if (resultForecastMessageForDayGeo.getPressure() < 755) {
+                resultForecastMessageForDayGeo.setPressureEmoji(weatherEmoji.getGrey_exclamation());
+            }
             resultForecastMessageForDayGeo.setHumidity(humidityForGeoposition);
             for (int j = 0; j < entry.getValue().size(); j++) {
                 switch (entry.getValue().get(j).getDate().substring(11, 16)) {
@@ -468,7 +542,5 @@ public class MessageGenerator {
 
     public void setCityNameForDB(String cityNameForDB) {
         this.cityNameForDB = cityNameForDB;
-    }
-    
-    
+    }   
 }

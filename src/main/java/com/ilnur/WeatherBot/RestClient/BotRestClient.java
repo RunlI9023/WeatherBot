@@ -3,7 +3,6 @@ package com.ilnur.WeatherBot.RestClient;
 import com.ilnur.WeatherBot.ForecastForCityName.ForecastForCityName;
 import com.ilnur.WeatherBot.ForecastForGeoPosition.ForecastForGeoposition;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +41,6 @@ public class BotRestClient {
         .retrieve()
         .body(ForecastForCityName.class);
         Thread currentThread = Thread.currentThread();
-        //logger.log(Level.INFO, "Поток для запроса по названию: {0}",currentThread.getName());
         return CompletableFuture.completedFuture(forecastForCityName);
     }
     
@@ -56,7 +54,6 @@ public class BotRestClient {
         .retrieve()
         .body(ForecastForGeoposition.class);
         Thread currentThread = Thread.currentThread();
-        //logger.log(Level.INFO, "Поток для запроса по геопозиции: {0}",currentThread.getName());
         return CompletableFuture.completedFuture(forecastForGeoposition);
     }
     
@@ -91,6 +88,4 @@ public class BotRestClient {
     public void setGeoLongitude(Double geoLongitude) {
         this.geoLongitude = geoLongitude;
     }
-    
-    
 }

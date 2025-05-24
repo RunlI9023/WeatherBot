@@ -10,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ public class BotUser extends User {
     @Column(name = "user_name")
     private String botUserName;
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    //@JoinColumn(name = "bot_users_chat_id")
     private List<City> botFindCityList = new ArrayList<>();
 
     public BotUser() {

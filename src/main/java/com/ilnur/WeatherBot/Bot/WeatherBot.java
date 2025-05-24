@@ -80,9 +80,14 @@ public class WeatherBot extends TelegramLongPollingBot {
                 logger.log(Level.INFO, "Новый пользователь направил геопозицию без START");
                 messageSender(messageGenerator.forAdmin(botAdminId, user.getBotUserName(), user.getBotUserId()));
             }
+            geoMessage = new SendMessage();
+            geoMessage.setReplyMarkup(service.getKeyBoard().geoLocationReplyKeyboard(service.getBotUserByTgId(user.getBotUserId())));
+            geoMessage.setText("Пожалуйста, ожидайте...");
+            geoMessage.setChatId(user.getBotUserId());
             try {
+                messageSender(geoMessage);
                 messageSender(messageGenerator.weatherForecastForGeoposition(user.getBotUserId()));
-//                service.saveNewUserCity(user.getBotUserId(), messageGenerator.weatherForecastForGeoposition(user.getBotUserId()).);
+                service.saveNewUserCity(user.getBotUserId(), messageGenerator.getCityNameForDB());
             } catch (JsonProcessingException e) {
                 logger.log(Level.INFO, "JSON {0}", e.toString());
             } catch (HttpClientErrorException e) {
@@ -95,7 +100,7 @@ public class WeatherBot extends TelegramLongPollingBot {
                 logger.log(Level.INFO, "ExecutionException {0}", ex.toString());
             }
         }
-        else if (update.hasMessage() && !"/start".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
+        else if (update.hasMessage() && !"/start".equals(update.getMessage().getText())&& !"/help".equals(update.getMessage().getText()) && !update.getMessage().hasLocation()) {
             String city = update.getMessage().getText();
             user.setBotUserId(update.getMessage().getFrom().getId());
             user.setBotUserName(update.getMessage().getFrom().getFirstName());
@@ -131,6 +136,13 @@ public class WeatherBot extends TelegramLongPollingBot {
                 messageSender(messageGenerator.cityNotFound(user.getBotUserId()));
             } catch (NullPointerException ex) {
                 logger.log(Level.WARNING, "NullPointerException {0}", ex.toString());
+            }
+        }
+        else if ("/help".equals(update.getMessage().getText())) {
+        try {
+                messageSender(messageGenerator.help(user.getBotUserId()));
+            } catch (HttpClientErrorException e) {
+                logger.log(Level.WARNING, "HttpClientErrorException, {0}", e.toString());
             }
         }
     }
