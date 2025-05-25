@@ -73,7 +73,10 @@ public class WeatherBot extends TelegramLongPollingBot {
             user.setBotUserName(update.getMessage().getFrom().getFirstName());
             restClient.setGeoLatitude(update.getMessage().getLocation().getLatitude());
             restClient.setGeoLongitude(update.getMessage().getLocation().getLongitude());
-            if (service.existUserById(user.getBotUserId())) {
+            if (service.existUserByTgId(user.getBotUserId())) {
+                user.setID(service.getBotUserByTgId(user.getBotUserId()).getID());
+                user.setBotUserId(service.getBotUserByTgId(user.getBotUserId()).getBotUserId());
+                user.setBotUserName(service.getBotUserByTgId(user.getBotUserId()).getBotUserName());
                 logger.log(Level.INFO, "Существующий пользователь продолжил сессию, получена геопозиция");}
             else {
                 service.saveNewUser(update.getMessage().getFrom().getId(), update.getMessage().getFrom().getFirstName());
@@ -150,8 +153,6 @@ public class WeatherBot extends TelegramLongPollingBot {
     public void messageSender(SendMessage message) {
         try {
             execute(message);
-            //Thread currentThread = Thread.currentThread();
-            //logger.log(Level.INFO, "Отправка сообщения, поток : {0}", currentThread.getName());
         }
         catch (TelegramApiException e){
             logger.log(Level.WARNING, "Throw TelegramApiException {0}", e.toString());

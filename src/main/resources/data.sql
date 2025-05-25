@@ -1,1 +1,0 @@
-INSERT INTO bot_users (id, tg_id, user_name) VALUES (1, 1419881124, 'Ильнур');
