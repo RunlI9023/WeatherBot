@@ -70,4 +70,4 @@ Docker-Compose
 
 ### Сборка и запуск бота:  
 
-Деплой бота реализован на платформе Ubuntu-22.04, виртуальный хостинг "Timeweb-Cloud": [https://timeweb.cloud/](https://timeweb.cloud/
+Деплой бота реализован на платформе Ubuntu-22.04, виртуальный хостинг "Timeweb-Cloud": [https://timeweb.cloud/](https://timeweb.cloud/)
